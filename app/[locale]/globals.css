@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --primary-rgb: 106, 90, 73;
+  --secondary-rgb: 148, 125, 102;
+  --tertiary-rgb: 211, 179, 147;
+  --quaternary-rgb: 242, 231, 222;
+}
+
+.unshowscrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.unshowscrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+}
+
+body {
+  position: relative;
+}
