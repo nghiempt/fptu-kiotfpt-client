@@ -7,7 +7,7 @@ import DiscountIcon from "@mui/icons-material/Discount";
 
 const PromotionPolicy = () => {
   return (
-    <div className="w-full bg-[#F5F7FF]">
+    <div className="w-full bg-[rgb(var(--tertiary-rgb))]">
       <div className="w-3/4 flex justify-between items-center  mx-auto">
         <div className="m-20 text-center">
           <div className="flex justify-center items-center">
