@@ -25,7 +25,7 @@ export default function TabHome({ translate }: { translate: any }) {
         </div>
       </div>
 
-      <div className="w-full mt-10 grid grid-cols-6 gap-8">
+      <div className="w-full mt-10 grid lg:grid-cols-6 gap-8">
         {
           ['', '', '', '', '', '']?.map((item: any, index: any) => {
             return (
