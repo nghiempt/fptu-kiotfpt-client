@@ -3,5 +3,6 @@ export const ROUTE = {
   SHOP: "/shop",
   PRODUCT: "/product",
   SIGN_IN: "/sign-in",
+  SIGN_UP: "/sign-up",
   ADMIN: "/admin",
 };

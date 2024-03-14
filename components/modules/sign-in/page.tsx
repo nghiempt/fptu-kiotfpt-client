@@ -3,6 +3,8 @@
 import React, { useEffect } from "react";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+import Link from "next/link";
+import { ROUTE } from "@/constant/route";
 
 export default function SignIn({ translate }: { translate: any }) {
   const init = async () => { };
@@ -18,7 +20,7 @@ export default function SignIn({ translate }: { translate: any }) {
       <div className="items-center px-6 lg:py-6 ">
         <div className="flex items-center grid grid-cols-1 gap-x-10">
           <div className="lg:col-span-6 p-6 lg:p-20 bg-[rgb(var(--tertiary-rgb))] rounded-lg">
-            <h1 className="text-[24px] font-bold mb-4">Registered Customers</h1>
+            <h1 className="text-[24px] font-bold mb-4">Login</h1>
             <h1 className="text-[16px] font-light mb-4">
               If you have an account, sign in with your email address.
             </h1>
@@ -77,13 +79,17 @@ export default function SignIn({ translate }: { translate: any }) {
         <h1 className="text-[16px]">
           • Track orders and more
         </h1>
-        <button
+        <Link href={{
+          pathname: ROUTE.SIGN_UP
+        }}>
+          <button
           type="submit"
           className="login-button mt-10 mb-5 w-3/5 h-12 bg-[rgb(var(--primary-rgb))] rounded-full text-[16px]"
           style={{ color: "white" }}
         >
           Create An Account
         </button>
+        </Link>
       </div>
     </div>
   );

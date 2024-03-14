@@ -35,17 +35,7 @@ const SignUpContainer: NextPage<SignUpContainerProps> = async ({
           >
             <Header translate={t} />
             <div className="lg:w-3/4 justify-left items-left">
-              <h1 style={{ margin: 10, paddingLeft: 10 }}>Home / Login</h1>
-              <h1
-                style={{
-                  margin: 10,
-                  paddingLeft: 10,
-                  fontSize: 20,
-                  fontWeight: "bold",
-                }}
-              >
-                Customer Login
-              </h1>
+              <h1 style={{ margin: 10, paddingLeft: 10 }}>Home / Login / Sign Up</h1>
             </div>
             <SignUp translate={t} />
             <div className="w-full bg-[#F5F7FF]">
