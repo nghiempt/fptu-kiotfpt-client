@@ -9,113 +9,85 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function SignIn({ translate }: { translate: any }) {
-
   const init = async () => {};
 
   useEffect(() => {
     init();
   }, []);
 
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
 
   return (
-    <div className="lg:w-3/4 flex flex-col justify-center items-center lg:px-0">
-      <div className="items-center text-center px-6 lg:py-6">
-        <div className="flex items-center text-center grid grid-cols-1 lg:grid-cols-10 gap-x-10">
-          <div className="lg:col-span-6 text-center p-6 lg:p-20">
-            <h1 className="text-[24px] font-bold mb-4">
-              Chao Mung Quay Lai KIOTFPT
-            </h1>
-            <h1 className="text-[16px] text-[rgb(var(--primary-rgb))] font-light mb-4">
-              Dang nhap de su dung dich vu
+    <div className="lg:w-3/4 flex flex-col lg:flex-row justify-between items-center lg:px-0">
+      <div className="items-center px-6 lg:py-6 ">
+        <div className="flex items-center grid grid-cols-1 gap-x-10">
+          <div className="lg:col-span-6 p-6 lg:p-20 bg-[#F5F7FF]">
+            <h1 className="text-[24px] font-bold mb-4">Registered Customers</h1>
+            <h1 className="text-[16px] font-light mb-4">
+              If you have an account, sign in with your email address.
             </h1>
             <div className="w-full flex items-start flex-col mt-4">
-              <h1 className="text-[16px] mb-2">{translate('si-03')}</h1>
-              <div className="w-full bg-[#FBF7F4] flex rounded-lg border border-[#E1DEDB]">
+              <h1 className="text-[16px] mb-2">Email*</h1>
+              <div className="w-full flex rounded-lg border border-[#E1DEDB]">
                 <span className="flex items-center pl-1">
                   <EmailOutlinedIcon className="px-2" />
                 </span>
                 <input
                   type="text"
-                  placeholder={translate('si-04')}
-                  className="py-2 w-full bg-[#FBF7F4] placeholder-gray-400 font-medium rounded-lg text-gray-500 outline-none border-transparent focus:border-transparent focus:ring-0"
+                  placeholder="Enter your email"
+                  className="py-2 w-full placeholder-gray-400 font-medium rounded-lg text-gray-500 outline-none border-transparent focus:border-transparent focus:ring-0"
                 />
               </div>
             </div>
             <div className="w-full flex items-start flex-col mt-4 mb-6">
-              <h1 className="text-[16px] mb-2">{translate('si-05')}</h1>
-              <div className="w-full bg-[#FBF7F4] flex rounded-lg border border-[#E1DEDB]">
+              <h1 className="text-[16px] mb-2">Password*</h1>
+              <div className="w-full  flex rounded-lg border border-[#E1DEDB]">
                 <span className="flex items-center pl-1">
                   <LockOpenOutlinedIcon className="px-2" />
                 </span>
                 <input
                   type="text"
-                  placeholder={translate('si-06')}
-                  className="py-2 w-full bg-[#FBF7F4] placeholder-gray-400 font-medium rounded-lg text-gray-500 outline-none border-transparent focus:border-transparent focus:ring-0"
+                  placeholder="Enter your password"
+                  className="py-2 w-full placeholder-gray-400 font-medium rounded-lg text-gray-500 outline-none border-transparent focus:border-transparent focus:ring-0"
                 />
               </div>
             </div>
-            <div className="w-full flex justify-between items-center">
-              <div className="flex justify-center items-center">
-                <Checkbox className="p-0" />
-                <h1 className="text-[14px] text-[rgb(var(--primary-rgb))] ml-1">
-                  {translate('si-07')}
-                </h1>
-              </div>
-              <div className="">
-                <h1 className="text-[14px] text-[rgb(var(--tertiary-rgb))] font-bold">
-                  {translate('si-08')}
-                </h1>
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="login-button mt-8 mb-5 w-full h-10 bg-[rgb(var(--tertiary-rgb))] rounded-lg font-bold text-[16px]"
-              style={{ color: "white" }}
-            >
-              {translate('si-09')}
-            </button>
-            <div className="flex items-center justify-center mb-8">
-              <h1 className="text-[14px] text-[rgb(var(--primary-rgb))] mr-2">
-                {translate('si-10')}
-              </h1>
-              <Link href={{
-                pathname: '/sign-up',
-              }}>
-                <h1
-                  className="text-[14px] text-[rgb(var(--tertiary-rgb))] cursor-pointer font-bold"
-                >
-                  {translate('si-11')}
-                </h1></Link>
-            </div>
-            <>
-              <style>{`
-                                .semi-divider-with-text::before, .semi-divider-with-text::after {
-                                    border-bottom: 2px solid rgb(var(--primary-rgb));
-                                }
-                        `}</style>
-              <Divider>
-                <h1 className="text-[12px] text-[rgb(var(--primary-rgb))] font-bold mr-2 ml-2">
-                  {translate('si-12')}
-                </h1>
-              </Divider>
-            </>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="flex">
               <button
                 type="submit"
-                className="span-col-1 mt-8 mb-5 w-full h-10 bg-[rgb(var(--quaternary-rgb))] rounded-lg flex justify-center items-center"
-                style={{ color: "black" }}
+                className="login-button mt-10 mb-5 w-2/5 h-12 bg-[#0156FF] rounded-full text-[16px]"
+                style={{ color: "white" }}
               >
-                <div className="flex" onClick={() => signIn("google")}>
-                  <GoogleIcon />
-                  <h1 className="text-[14px] text-[rgb(var(--primary-rgb))] ml-2 font-semibold">
-                    {translate('si-13')} Google
-                  </h1>
-                </div>
+                Sign In
               </button>
+              <h1 className="mt-14 mb-5 ml-10 w-2/5 h-12 text-[#0156FF] cursor-pointer hover:underline">
+                Forgot Your Password?
+              </h1>
             </div>
           </div>
         </div>
+      </div>
+      <div className="lg:col-span-6 p-6 lg:p-20 bg-[#F5F7FF]">
+        <h1 className="text-[24px] font-bold mb-4">New Customer?</h1>
+        <h1 className="text-[16px] mb-4">
+          Creating an account has many benefits:
+        </h1>
+        <h1 className="text-[16px]">
+        • Check out faster 
+        </h1>
+        <h1 className="text-[16px]">
+        • Keep more than one address  
+        </h1>
+        <h1 className="text-[16px]">
+        • Track orders and more
+        </h1>
+        <button
+          type="submit"
+          className="login-button mt-10 mb-5 w-3/5 h-12 bg-[#0156FF] rounded-full text-[16px]"
+          style={{ color: "white" }}
+        >
+          Create An Account
+        </button>
       </div>
     </div>
   );
