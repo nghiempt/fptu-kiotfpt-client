@@ -2,7 +2,6 @@
 
 import React from "react";
 import PersonIcon from "@mui/icons-material/Person";
-import { Avatar } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -28,7 +27,7 @@ export default function Footer({ translate }: { translate: any }) {
                 className="pl-2 py-2 w-full bg-black placeholder-gray-500 font-medium text-gray-200 outline-none border-transparent focus:border-transparent focus:ring-0"
               />
             </div>
-            <button className="bg-blue-600 !text-white text-[14px] py-[10px] px-8 rounded-lg font-semibold border border-white-500">
+            <button className="bg-[rgb(var(--primary-rgb))] !text-white text-[14px] py-[10px] px-8 rounded-lg font-semibold border border-white-500">
               Subscribe
             </button>
           </div>

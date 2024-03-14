@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 
-export default function SignIn({ translate }: { translate: any }) {
+export default function SignUp({ translate }: { translate: any }) {
   const init = async () => { };
 
   useEffect(() => {

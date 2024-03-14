@@ -1,6 +1,10 @@
 // convert string to money
-export const convertStringToMoney = (money: string) => {
-  return money.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+export const convertStringToMoney = (money: any) => {
+  const number = parseInt(money, 10);
+  if (isNaN(number)) {
+    return 0
+  }
+  return number.toLocaleString('vi-VN').replace(/,/g, '.');
 };
 
 // limit string

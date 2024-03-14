@@ -1,7 +1,7 @@
 "use client";
 
 import { Divider } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import HeadphonesOutlinedIcon from "@mui/icons-material/HeadphonesOutlined";
@@ -9,89 +9,75 @@ import KeyboardReturnOutlinedIcon from "@mui/icons-material/KeyboardReturnOutlin
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import Filter7OutlinedIcon from "@mui/icons-material/Filter7Outlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useSearchParams } from "next/navigation";
+import { FetchData } from "@/fetch/fetch_data";
+import { convertStringToMoney } from "@/utils/helper";
+
 export default function ProductContainer({ translate }: { translate: any }) {
+
+  const searchParams = useSearchParams()
+
+  const [product, setProduct] = useState<any>([]);
+
+  const init = async () => {
+    const fetchproduct = await FetchData.GET_ALL_PRODUCTS()
+    let foundItem: any = fetchproduct?.find((item: any) => item?.p_id.toString() === (searchParams.get('productId') || '1'));
+    setProduct(foundItem)
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  useEffect(() => { }, [product]);
+
   return (
     <div className="lg:w-3/4 flex flex-col justify-center items-center px-4 lg:px-0">
       <div></div>
       <div className="lg:w-full mt-10">
         <div className="lg:w-full flex flex-col lg:flex-row gap-x-10">
           <div className="lg:w-1/2 flex flex-col justify-center items-center mb-10 lg:mb-0">
-            {/* <div
-              className="w-[400px] h-[400px] lg:w-[512px] lg:h-[512px] rounded-lg"
-              style={{
-                backgroundImage: `url(${currentThumbnail})`,
-                backgroundSize: "cover",
-              }}
-            ></div> */}
-
             <div className="max-w-sm rounded-lg overflow-hidden shadow-lg p-2">
               <div className="aspect-w-1 aspect-h-1">
                 <img
                   className="object-cover rounded-md"
-                  src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49"
+                  src={product?.p_thumbnail}
                   alt="Product Image"
                 />
               </div>
             </div>
             <div className="flex justify-center mt-4">
               <div className="grid grid-cols-5 gap-4">
-                <img
-                  src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49"
-                  alt="Image 1"
-                  className="rounded-lg cursor-pointer"
-                />
-                <img
-                  src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49"
-                  alt="Image 2"
-                  className="rounded-lg cursor-pointer"
-                />
-                <img
-                  src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49"
-                  alt="Image 3"
-                  className="rounded-lg cursor-pointer"
-                />
-                <img
-                  src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49"
-                  alt="Image 4"
-                  className="rounded-lg cursor-pointer"
-                />
-                <img
-                  src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49"
-                  alt="Image 5"
-                  className="rounded-lg cursor-pointer"
-                />
-                {/* <img src="https://down-vn.img.susercontent.com/file/cn-11134207-7r98o-lpj6o1mldjsv49" alt="Image 6" className="rounded-lg" /> */}
+                {
+                  ['', '', '', '', '']?.map((item: any, index: any) => {
+                    return (
+                      <img
+                        key={index}
+                        src={product?.p_thumbnail}
+                        alt="img"
+                        className="rounded-lg cursor-pointer"
+                      />
+                    )
+                  })
+                }
               </div>
-            </div>
-            <div className="mt-16 grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-4 lg:gap-y-0 lg:gap-x-4">
-              {/* {thumbnails?.map((item: any, index: any) => (
-                <div
-                  key={index}
-                  className="w-[72px] h-[72px] rounded-lg cursor-pointer"
-                  onClick={() => setCurrentThumbnail(item)}
-                  style={{
-                    backgroundImage: `url(${renderImage(item)})`,
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-              ))} */}
             </div>
           </div>
           <div className="lg:w-1/2">
             <h1 className="text-[22px] font-bold">
-              {/* {translate(product?.product_name_vi)} */}
+              {product?.p_name}
             </h1>
-            <h1 className="text-[12px] mt-2 mb-4">Tình trạng: "Còn hàng"</h1>
+            <h1 className="text-[12px] mt-2 mb-4">Tình trạng: Còn hàng</h1>
             <div className="flex items-center">
-              <h1 className="text-[28px] font-bold mr-4">0 VND</h1>
+              <h1 className="text-[28px] font-bold mr-4">{convertStringToMoney(product?.p_price || '0').toString()}</h1>
               <button className="bg-red-500 rounded-lg text-white text-[12px] px-4 py-1">
                 Giảm 10%
               </button>
             </div>
             <div className="flex mt-4 items-center">
-              <h1 className="text-[12px] mr-4">Kích Thước:</h1>
-              <button className="bg-[rgb(var(--tertiary-rgb))] rounded-lg text-white text-[12px] px-4 py-1 border border-[rgb(var(--tertiary-rgb))] mr-2">
-                {/* {product?.product_id} */}
+              <h1 className="text-[12px] mr-4">Mã Sản Phẩm:</h1>
+              <button className="bg-[rgb(var(--primary-rgb))] rounded-lg text-white text-[12px] px-4 py-1 border border-[rgb(var(--tertiary-rgb))] mr-2">
+                {product?.p_id}
               </button>
             </div>
             <div className="flex mt-4 items-center">

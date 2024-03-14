@@ -9,8 +9,8 @@ import { dir } from "i18next";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "KIOTFPT",
-  description: "KIOTFPT",
+  title: "KIOTFPT - Smart Ecommerce",
+  description: "Sàn Thương Mại Điện Tử Hiện Đại",
 };
 
 export function generateStaticParams() {

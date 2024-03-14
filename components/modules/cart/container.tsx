@@ -5,15 +5,14 @@ import BoxWrapper from "@/components/common/box-wrapper";
 import { NextPage } from "next";
 import Header from "@/components/common/_header";
 import Footer from "@/components/common/_footer";
-import SignIn from "./page";
+import Cart from "./page";
 import initTranslations from "@/app/i18n";
 import TranslationsProvider from "@/components/translation/translations-provider";
 import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import DiscountIcon from '@mui/icons-material/Discount';
 
-
-interface SignInContainerProps {
+interface CartContainerProps {
   params: {
     locale: string;
   };
@@ -21,7 +20,7 @@ interface SignInContainerProps {
 
 const i18nNamespaces = ["default"];
 
-const SignInContainer: NextPage<SignInContainerProps> = async ({
+const CartContainer: NextPage<CartContainerProps> = async ({
   params: { locale },
 }) => {
   const { t, resources } = await initTranslations(locale, i18nNamespaces);
@@ -48,7 +47,7 @@ const SignInContainer: NextPage<SignInContainerProps> = async ({
                 Customer Login
               </h1>
             </div>
-            <SignIn translate={t} />
+            <Cart translate={t} />
             <div className="w-full bg-[#F5F7FF]">
               <div className="w-3/4 flex justify-between items-center  mx-auto">
                 <div className="m-20 text-center">
@@ -96,4 +95,4 @@ const SignInContainer: NextPage<SignInContainerProps> = async ({
   );
 };
 
-export default SignInContainer;
+export default CartContainer;

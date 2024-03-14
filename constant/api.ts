@@ -1,6 +1,6 @@
-export const HOST = `https://.../api/v1`
+export const HOST = `https://kiotfptapi.smartboardinghouse.me`
 
 export const API = {
-  GET_ALL_PRODUCT: `${HOST}/product/get-all`,
-  GET_ALL_CATEGORIES: `${HOST}/category/get-all-categories`,
+  GET_ALL_PRODUCTS: `${HOST}/get-all-products`,
+  GET_ALL_SHOPS: `${HOST}/get-all-shops`,
 };
