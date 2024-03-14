@@ -8,6 +8,7 @@ import Footer from "@/components/common/_footer";
 import Product from "./page";
 import initTranslations from "@/app/i18n";
 import TranslationsProvider from "@/components/translation/translations-provider";
+import PromotionPolicy from "@/components/common/promotion-policy";
 
 interface ProductContainerProps {
   params: {
@@ -32,6 +33,7 @@ const ProductContainer: NextPage<ProductContainerProps> = async ({
           >
             <Header translate={t} />
             <Product translate={t} />
+            <PromotionPolicy/>
             <Footer translate={t} />
           </TranslationsProvider>
         </div>
