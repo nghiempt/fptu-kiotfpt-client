@@ -4,6 +4,7 @@ import React from "react";
 import { convertStringToMoney } from "@/utils/helper";
 import Link from "next/link";
 import { ROUTE } from "@/constant/route";
+import Rating from '@mui/material/Rating';
 
 const ProductCard = ({ product, index }: { product: any, index: any }) => {
     return (
@@ -20,8 +21,16 @@ const ProductCard = ({ product, index }: { product: any, index: any }) => {
                 <img className="aspect-w-1 object-cover rounded-md" src={product?.p_thumbnail} alt="img" style={{ width: '100%' }} />
             </div>
             <div className="aspect-w-1 aspect-h-1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, padding: "8px 8px 16px" }}>
-                <h1 className="text-[16px] font-semibold hover:font-bold hover:drop-shadow-lg" >{product?.p_name}</h1>
-                <h1 className="text-[20px] hover:underline">{convertStringToMoney(product?.p_price || '0').toString()} VND</h1>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <Rating name="read-only" value={4.5} readOnly size="small" />
+                    <span className="ml-2">Review &#40;4&#41;</span>
+                </div>
+                <h1 className="text-[16px] text-base mb-4 hover:font-bold hover:drop-shadow-lg" >{product?.p_name}</h1>
+                {245000 && (
+                    <h1 className="text-[20px] text-sm text-gray-600 line-through">{convertStringToMoney(245000 || '0').toString()} VND</h1>
+                )
+                }
+                <h1 className="text-[20px] text-lg font-semibold hover:underline">{convertStringToMoney(product?.p_price || '0').toString()} VND</h1>
             </div>
         </Link>
     );
