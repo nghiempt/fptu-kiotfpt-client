@@ -19,15 +19,15 @@ export default function SignUp({ translate }: { translate: any }) {
   useEffect(() => {}, []);
 
   return (
-    <div className="lg:w-3/4 flex flex-col lg:flex-row justify-center items-center lg:px-0 ">
-      <div className="items-center px-6 lg:py-6 ">
+    <div className="lg:w-1/2 flex flex-col lg:flex-row justify-center items-center lg:px-0 bg-[rgb(var(--tertiary-rgb))]">
+      <div className="items-center px-6 lg:py-4 ">
         <div className="flex items-center grid grid-cols-1">
-          <div className="lg:col-span-6 p-6 lg:p-20 bg-[rgb(var(--tertiary-rgb))] rounded-lg">
-            <h1 className="text-[24px] font-bold mb-4">Create An Account</h1>
+          <div className="lg:col-span-6 p-2 bg-[rgb(var(--tertiary-rgb))] rounded-lg">
+            <h1 className="text-[24px] font-bold">Create An Account</h1>
             <h1 className="text-[16px] font-light mb-4">
               Fill out the form to sign up our service.
             </h1>
-            <div className="w-full flex items-start flex-col mt-4">
+            <div className="w-full flex items-start flex-col mt-2">
               <h1 className="text-[16px] mb-2">Name*</h1>
               <div className="w-full flex rounded-lg border border-gray-200">
                 <span className="flex items-center pl-1 bg-white rounded-lg">
@@ -40,7 +40,7 @@ export default function SignUp({ translate }: { translate: any }) {
                 />
               </div>
             </div>
-            <div className="w-full flex items-start flex-col mt-4">
+            <div className="w-full flex items-start flex-col mt-2">
               <h1 className="text-[16px] mb-2">Address*</h1>
               <div className="w-full flex rounded-lg border border-gray-200">
                 <span className="flex items-center pl-1 bg-white rounded-lg">
@@ -53,7 +53,7 @@ export default function SignUp({ translate }: { translate: any }) {
                 />
               </div>
             </div>
-            <div className="w-full flex items-start flex-col mt-4">
+            <div className="w-full flex items-start flex-col mt-2">
               <h1 className="text-[16px] mb-2">Phone*</h1>
               <div className="w-full flex rounded-lg border border-gray-200">
                 <span className="flex items-center pl-1 bg-white rounded-lg">
@@ -66,7 +66,7 @@ export default function SignUp({ translate }: { translate: any }) {
                 />
               </div>
             </div>
-            <div className="w-full flex items-start flex-col mt-4">
+            <div className="w-full flex items-start flex-col mt-2">
               <h1 className="text-[16px] mb-2">Email*</h1>
               <div className="w-full flex rounded-lg border border-gray-200">
                 <span className="flex items-center pl-1 bg-white rounded-lg">
@@ -79,7 +79,7 @@ export default function SignUp({ translate }: { translate: any }) {
                 />
               </div>
             </div>
-            <div className="w-full flex items-start flex-col mt-4 mb-6">
+            <div className="w-full flex items-start flex-col mt-2">
               <h1 className="text-[16px] mb-2">Password*</h1>
               <div className="w-full  flex rounded-lg border border-gray-200">
                 <span className="flex items-center pl-1 bg-white rounded-lg">
@@ -92,7 +92,7 @@ export default function SignUp({ translate }: { translate: any }) {
                 />
               </div>
             </div>
-            <div className="w-full flex items-start flex-col mt-4 mb-6">
+            <div className="w-full flex items-start flex-col mt-2 mb-6">
               <h1 className="text-[16px] mb-2">Confirm Password*</h1>
               <div className="w-full  flex rounded-lg border border-gray-200">
                 <span className="flex items-center pl-1 bg-white rounded-lg">
@@ -108,7 +108,7 @@ export default function SignUp({ translate }: { translate: any }) {
             <div className="flex flex-col justify-center items-center">
               <button
                 type="submit"
-                className="login-button mt-10 mb-3 w-4/5 h-12 bg-[rgb(var(--primary-rgb))] rounded-lg text-[16px]"
+                className="login-button mb-3 w-4/5 h-12 bg-[rgb(var(--primary-rgb))] rounded-lg text-[16px]"
                 style={{ color: "white" }}
               >
                 Sign Up

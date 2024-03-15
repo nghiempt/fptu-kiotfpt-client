@@ -31,13 +31,13 @@ const SignUpContainer: NextPage<SignUpContainerProps> = async ({
             locale={locale}
             resources={resources}
           >
-            <Header translate={t} />
+            {/* <Header translate={t} />
             <div className="lg:w-3/4 justify-left items-left">
               <h1 style={{ margin: 10, paddingLeft: 10 }}>Home / Login / Sign Up</h1>
-            </div>
+            </div> */}
             <SignUp translate={t} />
-            <PromotionPolicy />
-            <Footer translate={t} />
+            {/* <PromotionPolicy /> */}
+            {/* <Footer translate={t} /> */}
           </TranslationsProvider>
         </div>
       </div>
