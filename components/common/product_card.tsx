@@ -28,12 +28,12 @@ const ProductCard = ({ product, index }: { product: any, index: any }) => {
                 <h1 className="text-[16px] text-base mb-2 hover:font-bold hover:drop-shadow-lg" >{limitString(product?.p_name, 40)}</h1>
                 {245000 && (
                     <div className="flex gap-x-2">
-                        <h1 className="text-[20px] text-sm text-gray-600 line-through">{convertStringToMoney(product?.p_price*0.9 || '0').toString()} VND</h1>
+                        <h1 className="text-[20px] text-sm text-gray-600 line-through">{convertStringToMoney(product?.p_price || '0').toString()} VND</h1>
                         <h1 className="bg-gray-100 px-2 rounded-md">10%</h1>
                     </div>
                 )
                 }
-                <h1 className="text-[20px] text-lg font-semibold hover:underline">{convertStringToMoney(product?.p_price || '0').toString()} VND</h1>
+                <h1 className="text-[20px] text-lg font-semibold hover:underline">{convertStringToMoney(product?.p_price*0.9 || '0').toString()} VND</h1>
             </div>
         </Link>
     );
