@@ -13,8 +13,8 @@ export default function Footer({ translate }: { translate: any }) {
       <div className="lg:w-3/4 flex flex-col ">
         <div className="flex justify-between mt-3 items-start">
           <div className="w-2/3">
-            <h4 className="text-[30px] text-white">Sign Up</h4>
-            <h6 className="text-[12px] text-white mt-2">Be the first ...</h6>
+            <h4 className="text-[30px] text-white">KIOTFPT</h4>
+            <h6 className="text-[12px] text-white mt-2">Smart Ecommerce</h6>
           </div>
           <div className="flex justify-center items-center">
             <div className="bg-black flex border border-white-500 rounded-lg pl-2 pr-10 mr-2">
@@ -145,11 +145,11 @@ export default function Footer({ translate }: { translate: any }) {
             </h1>
 
             <h1 className="text-[13px] text-white">
-              Address: 1234 Street Adress City Address, 1234
+              Address: 1234 Street Adress City Address
             </h1>
             <h1 className="text-[13px] text-white">Phones: (00) 1234 5678</h1>
             <h1 className="text-[13px] text-white">
-              We are open: Monday-Thursday: 9:00 AM - 5:30 PM
+              We are open: 9:00 AM - 5:30 PM
             </h1>
             <h1 className="text-[13px] text-white">
               Friday: 9:00 AM - 6:00 PM
@@ -172,7 +172,7 @@ export default function Footer({ translate }: { translate: any }) {
               &nbsp; <PaymentIcon /> &nbsp; <PaymentIcon />
             </div>
             <h1 className="text-[12px] text-gray-500 ">
-              Copyright © 2023 KIOTFPT. Powered by FPTU.
+              Copyright © 2024 KIOTFPT. Powered by InnovaThinker.
             </h1>
           </div>
         </div>

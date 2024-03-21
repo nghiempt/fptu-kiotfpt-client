@@ -55,7 +55,7 @@ export default function AdminShop() {
 
   const handleDeleteProduct = async (productId: any) => {
     try {
-      const response = await fetch(`https://ecokav2.devilop.me/api/products/delete-product/${productId}`, {
+      const response = await fetch(`${productId}`, {
         method: 'DELETE'
       });
       window.location.reload()
@@ -82,7 +82,7 @@ export default function AdminShop() {
 
       <div className="w-1/6 h-screen flex flex-col pt-20 border-r border-gray-300">
         <div className="flex justify-center items-center">
-          <h1 className="text-[20px] font-medium">ECOKA ADMIN</h1>
+          <h1 className="text-[20px] font-medium">KIOTFPT ADMIN</h1>
         </div>
         <div className="h-[34px]"></div>
         <Divider />
