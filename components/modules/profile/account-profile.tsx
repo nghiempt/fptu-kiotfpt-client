@@ -62,7 +62,7 @@ export default function AccountProfile() {
   return (
     <div className="w-full border-box pb-36">
       <h1 className="font-semibold text-[20px] py-4">Account Information</h1>
-      <div className="w-full flex gap-x-4 bg-gray-50 rounded-lg shadow-md">
+      <div className="w-full flex gap-x-4 bg-gray-50 rounded-lg  shadow-md">
         <div className="w-3/5 flex flex-col gap-6 p-4">
           <h1 className="text-[14px] font-semibold">Personal Information</h1>
           <div className="flex w-full gap-x-2 justify-between items-center">
