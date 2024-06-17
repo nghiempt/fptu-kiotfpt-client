@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 
 export default function Checkout() {
 
-  const cartDataStore = localStorage.getItem('cart') as any;
+  const cartDataStore = localStorage.getItem('dataCart') as any;
 
   const [isVoucherPopupOpen, setIsVoucherPopupOpen] = useState(false);
   const [cartData, setCartData] = React.useState([] as any);
@@ -22,6 +22,7 @@ export default function Checkout() {
 
   useEffect(() => {
     setCartData(JSON.parse(cartDataStore || '') || []);
+    
   }, [])
 
   return (
@@ -54,11 +55,14 @@ export default function Checkout() {
               </div>
               <div className="flex flex-col gap-4">
                 {
-                  cartData?.map((section: any, index: any) => {
+                  cartData?.map((item: any, index: any) => {
                     return (
-                      section?.items?.map((item: any, index: any) => {
-                        return (
+                      
                           <div key={index}>
+                            {/* <div className="w-full bg-gray-100 p-2 flex items-center gap-2 rounded-lg">
+                    <img src={section?.shop?.thumbnail} alt="img" style={{ width: 50 }} />
+                    <h1>{section?.shop?.name}</h1>
+                  </div> */}
                             <div className="bg-white p-4 rounded-lg border border-gray-100">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center">
@@ -69,14 +73,14 @@ export default function Checkout() {
                                     <p className="text-sm font-semibold">
                                       {item?.product?.name}
                                     </p>
-                                    <p className="text-xs text-gray-500">Quantity: 1</p>
-                                    <p className="text-xs text-gray-500">Size: XL</p>
+                                    <p className="text-xs text-gray-500">Quantity: {item?.repo?.quantity}</p>
+                                    <p className="text-xs text-gray-500">Color: {item?.repo?.color?.value}</p>
+                                    <p className="text-xs text-gray-500">Size: {item?.repo?.size?.value}</p>
                                   </div>
                                 </div>
                                 <div className="text-right flex flex-col gap-1">
-                                  <p className="text-sm text-gray-500">22:00đ - 9.500đ</p>
                                   <p className="text-lg font-bold">
-                                    {item?.price}đ
+                                  ${item?.repo?.price * item?.repo?.quantity}
                                   </p>
                                 </div>
                               </div>
@@ -92,8 +96,7 @@ export default function Checkout() {
                             </div>
                           </div>
                         )
-                      })
-                    )
+                     
                   })
                 }
               </div>

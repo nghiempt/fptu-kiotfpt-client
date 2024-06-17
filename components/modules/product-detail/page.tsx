@@ -2,7 +2,7 @@
 
 import CategoryMenu from "@/components/common/category-menu";
 import CheckIcon from "@mui/icons-material/Check";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import MessageIcon from "@mui/icons-material/Message";
@@ -21,38 +21,112 @@ import Link from "next/link";
 import { ROUTE } from "@/constant/route";
 import { ProductService } from "@/service/product";
 import { useSearchParams } from "next/navigation";
+import { CartService } from "@/service/cart";
+import Cookie from "js-cookie";
 
 export default function ProductDetail() {
-
   const searchParams = useSearchParams();
+  const defaultImage =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU";
+  const [hoveredImage, setHoveredImage] = useState(null);
+  const accountID = Cookie.get("accountID");
+  const [products, setProducts] = useState([]);
+  const account_id = JSON.parse(accountID || "");
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [quantity, setQuantity] = useState(0);
+  const [note, setNote] = useState("");
+  const [variantId, setVariantId] = useState(null);
+  const isAllSelected = selectedColor && selectedSize && quantity > 0;
+  const buttonClass = isAllSelected
+    ? "border px-2 py-2 bg-blue-500 rounded-md w-full cursor-pointer"
+    : "border px-2 py-2 bg-gray-300 rounded-md w-full cursor-not-allowed";
+ 
+  const handleSelectColor = (color:any) => {
+    setSelectedColor(color);
+    updateVariantId(color, selectedSize);
+  };
 
+  const handleSelectSize = (size:any) => {
+    setSelectedSize(size);
+    updateVariantId(selectedColor, size);
+  };
+  const handleQuantityChange = (event: any) => {
+    setQuantity(event.target.value);
+  };
+  const updateVariantId = (color:any, size:any) => {
+    if (color && size) {
+      const matchedVariant = variants.find((variant:any) =>
+        variant?.color?.value === color?.value && variant?.size?.value === size?.value
+      );
+      if (matchedVariant) {
+        setVariantId(matchedVariant?.id);
+      }
+    }
+    console.log(color?.value);
+    
+  }
   const [currentProduct, setCurrentProduct] = useState({
     thumbnail: [
       {
-        link: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU'
+        link: defaultImage,
       },
       {
-        link: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU'
+        link: defaultImage,
       },
       {
-        link: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU'
+        link: defaultImage,
       },
       {
-        link: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU'
+        link: defaultImage,
       },
       {
-        link: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU'
+        link: defaultImage,
       },
       {
-        link: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU'
-      }
+        link: defaultImage,
+      },
     ],
   } as any);
 
-  const [hoveredImage, setHoveredImage] = useState(null);
-  const [selectedImage, setSelectedImage] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU');
-
-  const [products, setProducts] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(
+    currentProduct?.thumbnail[0]?.link
+  );
+  //kiểm tra trùng color
+  const mergedColors = currentProduct?.variants?.reduce(
+    (acc: any, curr: any) => {
+      const existingColor = acc.find(
+        (item: any) => item.color?.value === curr.color?.value
+      );
+      if (existingColor) {
+        existingColor.quantity += curr.quantity;
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    },
+    []
+  );
+  //kiểm tra trùng size
+  const mergedSizes = currentProduct?.variants?.reduce(
+    (acc: any, curr: any) => {
+      const existingSize = acc.find(
+        (item: any) => item.size?.value === curr.size?.value
+      );
+      if (existingSize) {
+        existingSize.quantity += curr.quantity;
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    },
+    []
+  );
+  const addItemToCart = () => {
+    // CartService.addToCart(dataAddToCart);
+    
+    // alert("Added to cart");
+  };
 
   React.useEffect(() => {
     const fetch = async () => {
@@ -61,21 +135,40 @@ export default function ProductDetail() {
         setProducts(pros?.data);
       }
 
-      const proDetail = await ProductService.getProductByID(searchParams.get('id') || "0");
+      const proDetail = await ProductService.getProductByID(
+        searchParams.get("id") || "0"
+      );
       if (proDetail?.result) {
         setCurrentProduct(proDetail?.data);
+        setSelectedImage(currentProduct?.thumbnail[0]?.link);
       }
-    }
+      // console.log(proDetail?.data);
+      
+      
+    };
     fetch();
-  }, []);
+  }, [currentProduct?.thumbnail[0]?.link]);
+  const variants = currentProduct?.variants;
+  const [dataAddToCart, setDataAddToCart] = useState({
+    account_id: account_id,
+    amount: quantity,
+    des: "",
+    varient_id: 1,
+  });
+  const handleNoteChange = (event:any) => {
+    const newNote = event.target.value;
+    setNote(newNote);
+    setDataAddToCart((prevData) => ({
+      ...prevData,
+      des: newNote,
+    }));
+  };
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <CategoryMenu />
       <div className="w-3/4 text-gray-400 text-[14px]">
-        <h1>
-          Home / Clothings / Men’s wear / Summer Clothing
-        </h1>
+        <h1>Home / Clothings / Men’s wear / Summer Clothing</h1>
       </div>
       <div className="w-3/4 flex gap-x-4 border border-[#E0E0E0] rounded-[6px] p-5 my-5 box-border">
         <div className="w-full flex gap-x-5">
@@ -90,12 +183,12 @@ export default function ProductDetail() {
             </div>
             <div className="grid grid-cols-6 gap-x-2">
               {[
-                currentProduct?.thumbnail[0]?.link || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU',
-                currentProduct?.thumbnail[1]?.link || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU',
-                currentProduct?.thumbnail[2]?.link || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU',
-                currentProduct?.thumbnail[3]?.link || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU',
-                currentProduct?.thumbnail[4]?.link || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU',
-                currentProduct?.thumbnail[5]?.link || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU',
+                currentProduct?.thumbnail[0]?.link || defaultImage,
+                currentProduct?.thumbnail[1]?.link || defaultImage,
+                currentProduct?.thumbnail[2]?.link || defaultImage,
+                currentProduct?.thumbnail[3]?.link || defaultImage,
+                currentProduct?.thumbnail[4]?.link || defaultImage,
+                currentProduct?.thumbnail[5]?.link || defaultImage,
               ]?.map((item: any, index: any) => {
                 return (
                   <img
@@ -126,9 +219,17 @@ export default function ProductDetail() {
                 <h1>Official</h1>
               </div>
             </div>
-            <h1 className="font-semibold text-[20px] my-2">
-              {currentProduct?.name}
-            </h1>
+            <div className="flex gap-x-2 items-center">
+              <h1 className="font-semibold text-[20px] my-2">
+                {currentProduct?.name}
+              </h1>
+              <span className="font-semibold text-red-500 rounded-full text-xs">
+                {currentProduct?.discount === 0
+                  ? ""
+                  : "-" + currentProduct?.discount + "%"}
+              </span>
+            </div>
+
             <div className="flex items-center">
               {[1, 2, 3, 4]?.map((item: any, index: any) => {
                 return <StarIcon className="text-[#FF9017]" />;
@@ -140,7 +241,9 @@ export default function ProductDetail() {
                   style={{ width: "8px" }}
                 />
                 <MessageIcon className="text-[#787A80]" />
-                <h1 className="text-[#787A80]">{currentProduct?.rate} reviews</h1>
+                <h1 className="text-[#787A80]">
+                  {currentProduct?.rate} reviews
+                </h1>
                 <FiberManualRecordIcon
                   className=" text-[#DBDBDB]"
                   style={{ width: "8px" }}
@@ -149,56 +252,106 @@ export default function ProductDetail() {
                 <h1 className="text-[#787A80]">{currentProduct?.sold} sold</h1>
               </div>
             </div>
-            <div className="rounded-md my-5 bg-blue-50 flex px-4 py-2 items-center justify-between text-center">
-              <h1 className="font-semibold text-[20px]">${currentProduct?.maxPrice}</h1>
-              <span className="font-semibold text-gray-700 rounded-full text-xs">Discount {currentProduct?.discount}%</span>
-            </div>
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3">Price:</h1>
-              <h1 className="text-[#606060] w-2/3">Negotiable</h1>
-            </div>
-            <Divider className="pt-5" />
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3 pt-2">Type:</h1>
-              <h1 className="text-[#606060] w-2/3 pt-2">Classic shoes</h1>
-            </div>
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3 pt-2">Material:</h1>
-              <h1 className="text-[#606060] w-2/3 pt-2">Plastic material</h1>
-            </div>
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3 pt-2">Design:</h1>
-              <h1 className="text-[#606060] w-2/3 pt-2">Modern nice</h1>
-            </div>
-            <Divider className="pt-5" />
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3 pt-2">Customization:</h1>
-              <h1 className="text-[#606060] w-2/3 pt-2">
-                Customized logo and design custom packages
+            <Divider className="pt-2" />
+            <div className="flex w-full pt-2">
+              <h1 className="text-gray-700 font-medium w-1/3">Description:</h1>
+              <h1 className="text-[#606060] w-2/3">
+                {currentProduct?.description}
               </h1>
             </div>
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3 pt-2">Protection:</h1>
-              <h1 className="text-[#606060] w-2/3 pt-2">Refund Policy</h1>
+            <Divider className="pt-2" />
+            <div className="flex pt-2">
+              <h1 className="text-gray-700 font-medium w-1/3 mt-2">Color:</h1>
+              <div className="flex gap-x-2 pt-2">
+                {mergedColors?.map((item: any, index: any) => {
+                  const colorClass =
+                    item === selectedColor ? "border-2 border-gray-700" : "border";
+                  return (
+                    <div
+                      key={index}
+                      className={`flex w-full ${colorClass} rounded-md px-2 py-1 items-center cursor-pointer`}
+                      onClick={() => handleSelectColor(item)}
+                    >
+                      <h1 className="text-[#606060] w-2/3">
+                        {item?.color?.value}
+                      </h1>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex w-full">
-              <h1 className="text-[#8B96A5] w-1/3 pt-2">Warranty:</h1>
-              <h1 className="text-[#606060] w-2/3 pt-2">
-                2 years full warranty{" "}
+            <div className="flex w-full pt-2">
+              <h1 className="text-gray-700 font-medium w-1/3 pt-2">Size:</h1>
+              <div className="flex gap-x-2 pt-2">
+                {mergedSizes?.map((item: any, index: any) => {
+                  const sizeClass =
+                    item === selectedSize ? "border-2 border-gray-700" : "border";
+                  return (
+                    <div
+                      key={index}
+                      className={`flex w-full ${sizeClass} rounded-md px-2 py-1 items-center cursor-pointer`}
+                      onClick={() => handleSelectSize(item)}
+                    >
+                      <h1 className="text-[#606060] w-2/3">
+                        {item?.size?.value}
+                      </h1>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="flex w-full pt-2">
+              <h1 className="text-gray-700 font-medium w-1/3 pt-2">
+                Quantity:
               </h1>
+              <div className="flex gap-x-2 pt-2">
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  className=" w-full border rounded-md px-2 py-1 outline-none"
+                />
+              </div>
             </div>
-            <Divider className="pt-5" />
+            <div className="flex items-center justify-center pt-5">
+              <button
+                onClick={addItemToCart}
+                className={buttonClass}
+                disabled={!isAllSelected}
+              >
+                Add to cart
+              </button>
+            </div>
+            <div className="pt-4 flex flex-col gap-2">
+              <h1 className="text-gray-700 font-medium">Note:</h1>
+              <textarea
+                name="Note:"
+                id=""
+                placeholder="....."
+                value={note}
+                onChange={handleNoteChange}
+                className="border rounded-md w-full p-2 outline-none min-h-20"
+              />
+            </div>
           </div>
           <div className="w-1/5">
             <div className="border rounded-md p-4 flex flex-col">
-              <Link href={{
-                pathname: ROUTE.SHOP,
-              }}>
+              <Link
+                href={{
+                  pathname: ROUTE.SHOP,
+                }}
+              >
                 <div className="flex gap-x-2 cursor-pointer">
-                  <img src='https://vcdn.tikicdn.com/ts/seller/8e/25/1b/c8c4bb3dd19235890818a8284cad3658.png' alt="img" style={{ width: "50px", height: "50px" }} />
+                  <img
+                    src="https://vcdn.tikicdn.com/ts/seller/8e/25/1b/c8c4bb3dd19235890818a8284cad3658.png"
+                    alt="img"
+                    style={{ width: "50px", height: "50px" }}
+                  />
                   <div className="text-[12px] flex flex-col justify-center">
                     <h1>Supplier</h1>
-                    <h1 className="text-[16px] font-semibold">Minh Tuan Mobile</h1>
+                    <h1 className="text-[16px] font-semibold">
+                      Minh Tuan Mobile
+                    </h1>
                   </div>
                 </div>
               </Link>
@@ -228,7 +381,10 @@ export default function ProductDetail() {
             </div>
             <div className="flex gap-x-2 justify-center pt-5 cursor-pointer">
               <FavoriteBorderOutlinedIcon className="text-[rgb(var(--quaternary-rgb))]" />
-              <h1 className="text-[rgb(var(--quaternary-rgb))]"> Save for later</h1>
+              <h1 className="text-[rgb(var(--quaternary-rgb))]">
+                {" "}
+                Save for later
+              </h1>
             </div>
           </div>
         </div>
@@ -244,7 +400,11 @@ export default function ProductDetail() {
                   <div className="flex justify-between">
                     <div className="flex gap-x-2 mt-2">
                       <div className="p-2 border rounded-full bg-white">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ6fJuz8nUzHaTJ-Uyj_1JC89WavzpO_CS-g&usqp=CAU" alt="img" style={{ width: "24px", height: "24px" }} />
+                        <img
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ6fJuz8nUzHaTJ-Uyj_1JC89WavzpO_CS-g&usqp=CAU"
+                          alt="img"
+                          style={{ width: "24px", height: "24px" }}
+                        />
                       </div>
                       <div>
                         <h1 className="font-semibold text-[#1C1C1C]">
@@ -260,7 +420,9 @@ export default function ProductDetail() {
                               className="text-[#DBDBDB]"
                               style={{ width: "8px" }}
                             />
-                            <h1 className="text-xs text-gray-500">purchased 31/05/2024</h1>
+                            <h1 className="text-xs text-gray-500">
+                              purchased 31/05/2024
+                            </h1>
                           </div>
                         </div>
                       </div>
@@ -316,12 +478,12 @@ export default function ProductDetail() {
         </div>
         <div className="w-full my-8">
           <div className="">
-            <h1 className="font-black text-2xl mb-4 text-gray-700">Related Products</h1>
-            <div className="flex grid grid-cols-5 gap-x-4">
+            <h1 className="font-black text-2xl mb-4 text-gray-700">
+              Related Products
+            </h1>
+            <div className="grid grid-cols-5 gap-x-4">
               {products.slice(0, 5)?.map((item: any, index: any) => {
-                return (
-                  <CardProduct item={item} index={index} limit={100} />
-                );
+                return <CardProduct item={item} index={index} limit={100} />;
               })}
             </div>
           </div>
