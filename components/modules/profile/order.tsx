@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -9,6 +9,8 @@ import Divider from "@mui/material/Divider";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import StoreIcon from "@mui/icons-material/Store";
 import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions';
+import Cookie from 'js-cookie';
+import { ProfileService } from "@/service/profile";
 
 interface CustomTabPanelProps {
   children: React.ReactNode;
@@ -45,7 +47,9 @@ function a11yProps(index: any) {
 }
 
 export default function Order() {
+  const accountID = JSON.parse(Cookie.get('accountID') || "0");
   const [value, setValue] = React.useState(0);
+  const [orders, setOrders] = React.useState([] as any);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -53,10 +57,17 @@ export default function Order() {
 
   React.useEffect(() => {
     const fetch = async () => {
-      
+      const prof = await ProfileService.getAllOrderByAccountID(accountID);
+      if (prof?.result) {
+        setOrders(prof?.data);
+      } else {
+        console.log("wrong");
+      }
     }
     fetch();
   }, []);
+
+  useEffect(() => { }, [orders]);
 
   return (
     <div className="w-full box-border flex flex-col gap-5">
@@ -96,37 +107,46 @@ export default function Order() {
       </div>
       <CustomTabPanel value={value} index={0}>
         <div className="flex flex-col gap-4">
-          {[1, 2, 3]?.map((item: any, index: any) => {
+          {orders?.map((item: any, index: any) => {
             return (
               <div className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
                 <div className="flex gap-x-2 text-gray-500">
                   <LocalShippingIcon />
-                  <h1>Successful Delivery</h1>
+                  {item?.status?.id === 27 && <h1>Successful Delivery</h1>}
+                  {item?.status?.id === 21 && <h1>Pending Shop</h1>}
+                  {item?.status?.id === 24 && <h1>Delivering</h1>}
+                  {item?.status?.id === 25 && <h1>Cancel</h1>}
+                  {item?.status?.id === 26 && <h1>Returning</h1>}
                 </div>
                 <Divider className="pt-2" />
-                <div className="w-full flex gap-x-2">
-                  <img className="rounded-md" src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" style={{ width: "10%" }} />
-                  <div className="w-full flex flex-col gap-2">
-                    <div className="flex justify-between">
-                      <h1 className="font-medium text-[14px]">
-                        Quạt sạc Sunhouse SHD7116 (25W) - Hàng chính hãng
-                      </h1>
-                      <h1 className="text-[16px] font-medium">270.000đ</h1>
+                {item?.section?.items?.map((item2: any, index: any) => {
+                  return (
+                    <div className="w-full flex gap-x-2">
+                      <img className="rounded-md" src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" style={{ width: "10%" }} />
+                      <div className="w-full flex flex-col gap-2">
+                        <div className="flex justify-between">
+                          <h1 className="font-medium text-[14px]">
+                            Quạt sạc Sunhouse SHD7116 (25W) - Hàng chính hãng
+                          </h1>
+                          <h1 className="text-[16px] font-medium">{item2?.quantity} x ${item2?.variant?.price}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <StoreIcon />
+                          <h1>{item?.shop?.name}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <IntegrationInstructionsIcon />
+                          <h1>{item2?.variant?.color?.value} - {item2?.variant?.size?.value}</h1>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
-                      <StoreIcon />
-                      <h1>Minh Tuấn Mobile</h1>
-                    </div>
-                    <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
-                      <IntegrationInstructionsIcon />
-                      <h1>KIOT3780</h1>
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
+
                 <Divider />
                 <div className="flex gap-x-2 justify-end text-[16px] items-center">
                   <h1 className="text-gray-400">Total amount:</h1>
-                  <h1 className="font-semibold text-xl">270.000đ</h1>
+                  <h1 className="font-semibold text-xl">${item?.total}</h1>
                 </div>
                 <div className="flex gap-x-2 justify-end text-blue-500">
                   <button className="bg-[rgb(var(--primary-rgb))] text-white rounded-md p-2">

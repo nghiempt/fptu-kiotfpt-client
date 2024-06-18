@@ -1,26 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CardProduct from "@/components/common/card-product";
-import { ProductService } from "@/service/product";
+import { ProfileService } from "@/service/profile";
+import Cookie from 'js-cookie';
 
 export default function Wishlist() {
-
+  const accountID = JSON.parse(Cookie.get('accountID') || "0");
   const [products, setProducts] = useState([]);
 
-  React.useEffect(() => {
+  const handleGetWishList = async () => {
     const fetch = async () => {
-      const pros = await ProductService.searchProduct("", "1", "4");
-      if (pros?.result) {
-        setProducts(pros?.data);
+      const prof = await ProfileService.getAllWishListByAccountID(accountID);
+      if (prof?.result) {
+        setProducts(prof?.data);
+        console.log(prof.data);
+      } else {
+        console.log(prof.data);
       }
     }
     fetch();
+  }
+
+  useEffect(() => {
+    handleGetWishList()
   }, []);
+
+  useEffect(() => { }, [products]);
 
   return (
     <div className="w-full box-border pb-32">
-      <h1 className="font-semibold text-[20px] py-4">Wishlist Product (4)</h1>
+      <h1 className="font-semibold text-[20px] py-4">Wishlist Product ({products?.length})</h1>
       <div className="w-full rounded-md flex grid grid-cols-4 gap-4">
         {products.slice(0, 6)?.map((item: any, index: any) => {
           return (

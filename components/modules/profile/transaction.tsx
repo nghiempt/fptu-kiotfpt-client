@@ -1,10 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Divider from "@mui/material/Divider";
 import { Pagination } from "@mui/material";
+import Cookie from 'js-cookie';
+import { ProfileService } from "@/service/profile";
 
 export default function Transaction() {
+  const accountID = JSON.parse(Cookie.get('accountID') || "0");
+  const [transactions, setTransactions] = useState([] as any);
+
+  const handleGetNotify = async () => {
+    const fetch = async () => {
+      const prof = await ProfileService.getAllTracsactionByAccountID(accountID);
+      if (prof?.result) {
+        setTransactions(prof?.data);
+        console.log(prof.data);
+      } else {
+        console.log("wrong");
+      }
+    }
+    fetch();
+  }
+
+  useEffect(() => {
+    handleGetNotify();
+  }, []);
+
+  useEffect(() => { }, [transactions]);
+
   return (
     <div className="w-full border-box">
       <h1 className="font-semibold text-[20px] py-4">Transaction Management</h1>
@@ -31,7 +55,7 @@ export default function Transaction() {
                 </thead>
                 <tbody>
                   {
-                    [1, 2, 3, 4, 5, 6, 7, 8]?.map((item: any, index: any) => {
+                    transactions?.map((item: any, index: any) => {
                       return (
                         <tr key={index}>
                           <td className={`px-5 py-5 ${index === 1 ? 'bg-gray-100' : 'bg-white'} border-b border-gray-200 text-sm`}>
@@ -44,16 +68,16 @@ export default function Transaction() {
                                   Payment Order #KIOT3789
                                 </p>
                                 <p className="text-gray-600 whitespace-no-wrap">
-                                  Minh Tuan Mobile
+                                  {item?.shop?.name}
                                 </p>
                               </div>
                             </div>
                           </td>
                           <td className={`px-5 py-5 ${index === 1 ? 'bg-gray-100' : 'bg-white'} border-b border-gray-200 text-sm`}>
-                            <p className="text-gray-900 whitespace-no-wrap">1.200.000đ</p>
+                            <p className="text-gray-900 whitespace-no-wrap">{item?.total}</p>
                           </td>
                           <td className={`px-5 py-5 ${index === 1 ? 'bg-gray-100' : 'bg-white'} border-b border-gray-200 text-sm`}>
-                            <p className="text-gray-900 whitespace-no-wrap">18 May 2024</p>
+                            <p className="text-gray-900 whitespace-no-wrap">{item?.timeComplete?.slice(0, 10)}</p>
                           </td>
                           <td className={`px-5 py-5 ${index === 1 ? 'bg-gray-100' : 'bg-white'} border-b border-gray-200 text-sm`}>
                             <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
@@ -67,9 +91,11 @@ export default function Transaction() {
                   }
                 </tbody>
               </table>
-              <div className="flex justify-center gap-x-2 mt-8 pb-6">
-                <Pagination count={10} variant="outlined" shape="rounded" />
-              </div>
+              {
+                transactions?.length > 0 && <div className="flex justify-center gap-x-2 mt-8 pb-6">
+                  <Pagination count={Math.ceil(transactions?.length / 10)} variant="outlined" shape="rounded" />
+                </div>
+              }
             </div>
           </div>
         </div>

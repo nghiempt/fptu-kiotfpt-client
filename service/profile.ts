@@ -26,7 +26,78 @@ export const updateProfile = async (payload: any) => {
     }
 };
 
+const getAllNotifyByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_NOTIFY_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const deleteNotifyByID = async (ID: string) => {
+    try {
+        const response = await fetch(API.DELTE_NOTIFY_BY_ID + `/${ID}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllOrderByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_ORDER_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllAddressByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_ADDRESS_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllWishListByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_WISHLIST_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllTracsactionByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_TRANSACTION_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProfileService = {
     getProfileByID,
-    updateProfile
+    updateProfile,
+    getAllNotifyByAccountID,
+    deleteNotifyByID,
+    getAllOrderByAccountID,
+    getAllAddressByAccountID,
+    getAllWishListByAccountID,
+    getAllTracsactionByAccountID
 }
