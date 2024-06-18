@@ -118,6 +118,7 @@ export default function Order() {
                   {item?.status?.id === 24 && <h1>Delivering</h1>}
                   {item?.status?.id === 25 && <h1>Cancel</h1>}
                   {item?.status?.id === 26 && <h1>Returning</h1>}
+                  - {item?.shop?.name}
                 </div>
                 <Divider className="pt-2" />
                 {item?.product?.map((item2: any, index: any) => {
