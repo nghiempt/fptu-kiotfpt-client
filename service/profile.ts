@@ -91,6 +91,42 @@ const getAllTracsactionByAccountID = async (ID: string) => {
     }
 };
 
+const getAllProvince = async () => {
+    try {
+        const response = await fetch(API.GET_ALL_PROVINCE);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllDistrictByProvinceID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_DISTRICT_BY_PROVINCE_ID + `/${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const createAddress = async (payload: any) => {
+    try {
+        const response = await fetch(API.CREATE_ADDRESS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProfileService = {
     getProfileByID,
     updateProfile,
@@ -99,5 +135,8 @@ export const ProfileService = {
     getAllOrderByAccountID,
     getAllAddressByAccountID,
     getAllWishListByAccountID,
-    getAllTracsactionByAccountID
+    getAllTracsactionByAccountID,
+    getAllProvince,
+    getAllDistrictByProvinceID,
+    createAddress
 }

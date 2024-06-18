@@ -60,6 +60,7 @@ export default function Order() {
       const prof = await ProfileService.getAllOrderByAccountID(accountID);
       if (prof?.result) {
         setOrders(prof?.data);
+        console.log(prof?.data);
       } else {
         console.log("wrong");
       }
@@ -119,20 +120,20 @@ export default function Order() {
                   {item?.status?.id === 26 && <h1>Returning</h1>}
                 </div>
                 <Divider className="pt-2" />
-                {item?.section?.items?.map((item2: any, index: any) => {
+                {item?.product?.map((item2: any, index: any) => {
                   return (
                     <div className="w-full flex gap-x-2">
                       <img className="rounded-md" src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" style={{ width: "10%" }} />
                       <div className="w-full flex flex-col gap-2">
                         <div className="flex justify-between">
                           <h1 className="font-medium text-[14px]">
-                            Quạt sạc Sunhouse SHD7116 (25W) - Hàng chính hãng
+                            {item2?.name}
                           </h1>
-                          <h1 className="text-[16px] font-medium">{item2?.quantity} x ${item2?.variant?.price}</h1>
+                          <h1 className="text-[16px] font-medium"> ${item2?.variant?.price}</h1>
                         </div>
                         <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
                           <StoreIcon />
-                          <h1>{item?.shop?.name}</h1>
+                          <h1>Amount: {item2?.amount}</h1>
                         </div>
                         <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
                           <IntegrationInstructionsIcon />

@@ -31,4 +31,7 @@ export const API = {
   GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
   GET_ALL_WISHLIST_BY_ACCOUNT_ID: `${HOST}/favourite/get-all`,
   GET_ALL_TRANSACTION_BY_ACCOUNT_ID: `${HOST}/transaction/get-all`,
+  GET_ALL_PROVINCE: `${HOST}/address/province/get-all`,
+  GET_ALL_DISTRICT_BY_PROVINCE_ID: `${HOST}/address/district/get-all-by-province`,
+  CREATE_ADDRESS: `${HOST}/address/create`,
 };
