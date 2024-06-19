@@ -1,28 +1,28 @@
 "use client";
 
+import CardProduct from "@/components/common/card-product";
 import CategoryMenu from "@/components/common/category-menu";
-import CheckIcon from "@mui/icons-material/Check";
-import React, { useRef, useEffect, useState } from "react";
-import StarIcon from "@mui/icons-material/Star";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import MessageIcon from "@mui/icons-material/Message";
-import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
-import { Divider } from "@mui/material";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import LanguageIcon from "@mui/icons-material/Language";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
-import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SuperDiscount from "@/components/common/super-discount";
 import { IMAGE } from "@/constant/image";
-import CardProduct from "@/components/common/card-product";
-import Link from "next/link";
 import { ROUTE } from "@/constant/route";
-import { ProductService } from "@/service/product";
-import { useSearchParams } from "next/navigation";
 import { CartService } from "@/service/cart";
+import { ProductService } from "@/service/product";
+import CheckIcon from "@mui/icons-material/Check";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import LanguageIcon from "@mui/icons-material/Language";
+import MessageIcon from "@mui/icons-material/Message";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
+import StarIcon from "@mui/icons-material/Star";
+import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { Divider } from "@mui/material";
 import Cookie from "js-cookie";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function ProductDetail() {
   const searchParams = useSearchParams();
@@ -32,40 +32,26 @@ export default function ProductDetail() {
   const accountID = Cookie.get("accountID");
   const [products, setProducts] = useState([]);
   const account_id = JSON.parse(accountID || "");
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedClassify, setSelectedClassify] = useState<{ id: any } | null>(
+    null
+  );
+  const [variantId, setVariantId] = useState(null);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState("");
-  const [variantId, setVariantId] = useState(null);
-  const isAllSelected = selectedColor && selectedSize && quantity > 0;
+  const isAllSelected = selectedClassify && quantity > 0;
   const buttonClass = isAllSelected
-    ? "border px-2 py-2 bg-blue-500 rounded-md w-full cursor-pointer"
+    ? "border px-2 py-2 bg-[rgb(var(--quaternary-rgb))] rounded-md w-full cursor-pointer text-white"
     : "border px-2 py-2 bg-gray-300 rounded-md w-full cursor-not-allowed";
- 
-  const handleSelectColor = (color:any) => {
-    setSelectedColor(color);
-    updateVariantId(color, selectedSize);
+
+  const handleSelectClassify = (classtify: any) => {
+    setSelectedClassify(classtify);
+    setVariantId(classtify?.id);
   };
 
-  const handleSelectSize = (size:any) => {
-    setSelectedSize(size);
-    updateVariantId(selectedColor, size);
-  };
   const handleQuantityChange = (event: any) => {
     setQuantity(event.target.value);
   };
-  const updateVariantId = (color:any, size:any) => {
-    if (color && size) {
-      const matchedVariant = variants.find((variant:any) =>
-        variant?.color?.value === color?.value && variant?.size?.value === size?.value
-      );
-      if (matchedVariant) {
-        setVariantId(matchedVariant?.id);
-      }
-    }
-    console.log(color?.value);
-    
-  }
+
   const [currentProduct, setCurrentProduct] = useState({
     thumbnail: [
       {
@@ -92,40 +78,14 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(
     currentProduct?.thumbnail[0]?.link
   );
-  //kiểm tra trùng color
-  const mergedColors = currentProduct?.variants?.reduce(
-    (acc: any, curr: any) => {
-      const existingColor = acc.find(
-        (item: any) => item.color?.value === curr.color?.value
-      );
-      if (existingColor) {
-        existingColor.quantity += curr.quantity;
-      } else {
-        acc.push(curr);
-      }
-      return acc;
-    },
-    []
-  );
-  //kiểm tra trùng size
-  const mergedSizes = currentProduct?.variants?.reduce(
-    (acc: any, curr: any) => {
-      const existingSize = acc.find(
-        (item: any) => item.size?.value === curr.size?.value
-      );
-      if (existingSize) {
-        existingSize.quantity += curr.quantity;
-      } else {
-        acc.push(curr);
-      }
-      return acc;
-    },
-    []
-  );
-  const addItemToCart = () => {
-    // CartService.addToCart(dataAddToCart);
-    
-    // alert("Added to cart");
+
+  const addItemToCart = async () => {
+    const dataC = await CartService.addToCart(dataAddToCart);
+    if (dataC?.result) {
+      alert("Added to cart");
+    } else {
+      alert("Add to cart failed");
+    }
   };
 
   React.useEffect(() => {
@@ -134,7 +94,6 @@ export default function ProductDetail() {
       if (pros?.result) {
         setProducts(pros?.data);
       }
-
       const proDetail = await ProductService.getProductByID(
         searchParams.get("id") || "0"
       );
@@ -142,25 +101,29 @@ export default function ProductDetail() {
         setCurrentProduct(proDetail?.data);
         setSelectedImage(currentProduct?.thumbnail[0]?.link);
       }
-      // console.log(proDetail?.data);
-      
-      
     };
     fetch();
   }, [currentProduct?.thumbnail[0]?.link]);
-  const variants = currentProduct?.variants;
+
+  useEffect(() => {
+    if (selectedClassify) {
+      setVariantId(selectedClassify?.id);
+    }
+    console.log(variantId);
+  }, [selectedClassify, variantId]);
+
   const [dataAddToCart, setDataAddToCart] = useState({
     account_id: account_id,
     amount: quantity,
-    des: "",
-    varient_id: 1,
+    note: note,
+    varient_id: variantId,
   });
-  const handleNoteChange = (event:any) => {
+  const handleNoteChange = (event: any) => {
     const newNote = event.target.value;
     setNote(newNote);
     setDataAddToCart((prevData) => ({
       ...prevData,
-      des: newNote,
+      note: newNote,
     }));
   };
 
@@ -260,46 +223,31 @@ export default function ProductDetail() {
               </h1>
             </div>
             <Divider className="pt-2" />
-            <div className="flex pt-2">
-              <h1 className="text-gray-700 font-medium w-1/3 mt-2">Color:</h1>
-              <div className="flex gap-x-2 pt-2">
-                {mergedColors?.map((item: any, index: any) => {
-                  const colorClass =
-                    item === selectedColor ? "border-2 border-gray-700" : "border";
+            <div className="flex pt-2 items-center">
+              <h1 className="text-gray-700 font-medium w-1/3 mt-2">
+                Classify:
+              </h1>
+              <div className="grid grid-cols-3 gap-x-2 pt-2">
+                {currentProduct?.variants?.map((item: any, index: any) => {
+                  const classifyClass =
+                    item === selectedClassify
+                      ? "border-2 border-gray-700"
+                      : "border";
                   return (
                     <div
                       key={index}
-                      className={`flex w-full ${colorClass} rounded-md px-2 py-1 items-center cursor-pointer`}
-                      onClick={() => handleSelectColor(item)}
+                      className={`flex w-full ${classifyClass} rounded-md px-3 py-1 items-center cursor-pointer`}
+                      onClick={() => handleSelectClassify(item)}
                     >
-                      <h1 className="text-[#606060] w-2/3">
-                        {item?.color?.value}
+                      <h1 className="text-[#606060] w-full">
+                        {item?.color?.value} - {item?.size?.value}
                       </h1>
                     </div>
                   );
                 })}
               </div>
             </div>
-            <div className="flex w-full pt-2">
-              <h1 className="text-gray-700 font-medium w-1/3 pt-2">Size:</h1>
-              <div className="flex gap-x-2 pt-2">
-                {mergedSizes?.map((item: any, index: any) => {
-                  const sizeClass =
-                    item === selectedSize ? "border-2 border-gray-700" : "border";
-                  return (
-                    <div
-                      key={index}
-                      className={`flex w-full ${sizeClass} rounded-md px-2 py-1 items-center cursor-pointer`}
-                      onClick={() => handleSelectSize(item)}
-                    >
-                      <h1 className="text-[#606060] w-2/3">
-                        {item?.size?.value}
-                      </h1>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+
             <div className="flex w-full pt-2">
               <h1 className="text-gray-700 font-medium w-1/3 pt-2">
                 Quantity:
@@ -313,7 +261,7 @@ export default function ProductDetail() {
                 />
               </div>
             </div>
-            <div className="flex items-center justify-center pt-5">
+            <div className="flex items-center justify-center pt-5 ">
               <button
                 onClick={addItemToCart}
                 className={buttonClass}

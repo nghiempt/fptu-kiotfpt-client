@@ -1,17 +1,18 @@
 import { API } from "@/constant/api";
 
-export const addToCart = async (payload: any) => {
+export const addToCart = async (dataC: any) => {
     try {
       const response = await fetch(API.ADD_TO_CART, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(dataC),
       });
       const data = await response.json();
+      console.log(dataC);
       console.log(data);
-      return true;
+      return data;
     } catch (err) {
       console.log(err);
       return false;
