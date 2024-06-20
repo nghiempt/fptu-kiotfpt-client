@@ -11,7 +11,9 @@ const getProfileByID = async (ID: string) => {
 };
 
 export const updateProfile = async (payload: any) => {
+    console.log(payload);
     try {
+
         const response = await fetch(API.UPDATE_PROFILE, {
             method: "PUT",
             headers: {
@@ -127,6 +129,50 @@ const createAddress = async (payload: any) => {
     }
 };
 
+const updatePassword = async (payload: any) => {
+    try {
+        const response = await fetch(API.UPDATE_PASSWORD, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        return false;
+    }
+};
+
+export const updateAddress = async (payload: any) => {
+    console.log(payload);
+    try {
+
+        const response = await fetch(API.UPDATE_ADDRESS, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAddressByID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ADDRESS_BY_ID + `/${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProfileService = {
     getProfileByID,
     updateProfile,
@@ -138,5 +184,8 @@ export const ProfileService = {
     getAllTracsactionByAccountID,
     getAllProvince,
     getAllDistrictByProvinceID,
-    createAddress
+    createAddress,
+    updatePassword,
+    updateAddress,
+    getAddressByID,
 }

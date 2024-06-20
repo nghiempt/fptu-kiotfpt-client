@@ -1,10 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import Cookie from 'js-cookie';
 import { ProfileService } from "@/service/profile";
 import InputLabel from '@mui/material/InputLabel';
@@ -176,7 +172,6 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
               }}
             />
           </div>
-
         </div>
         {/* <div className="w-3/4 flex justify-between items-center">
           <h1 className="w-1/4">Address Type</h1>
