@@ -13,13 +13,15 @@ const YourComponent = () => {
   const accountID = JSON.parse(Cookie.get('accountID') || "0");
   const [addresses, setAddresses] = useState([] as any);
   const [currentPage, setCurrentPage] = useState('addressList');
+  const [currentAddressEdit, setCurrentAddressEdit] = useState('' as any);
 
   const handleAddNewAddress = () => {
     setCurrentPage('createAddress');
   };
 
-  const handleEditAddress = () => {
+  const handleEditAddress = (addressID: any) => {
     setCurrentPage('updateAddress');
+    setCurrentAddressEdit(addressID);
   };
 
   const handleCancel = () => {
@@ -50,7 +52,7 @@ const YourComponent = () => {
       case 'createAddress':
         return <CreateAddress onCancel={handleCancel} />;
       case 'updateAddress':
-        return <UpdateAddress onCancel={handleCancel} />;
+        return <UpdateAddress onCancel={handleCancel} addressID={currentAddressEdit} />;
       default:
         return (
           <div className="w-full box-border flex flex-col gap-4 pb-48">
@@ -75,7 +77,7 @@ const YourComponent = () => {
                         <h1 className="text-[12px]">Default</h1>
                       </div>
                     </div>
-                    <button onClick={handleEditAddress} className="text-[rgb(var(--quaternary-rgb))] box-border border border-[rgb(var(--quaternary-rgb))] py-1 px-8 rounded-md">
+                    <button onClick={() => handleEditAddress(item?.address_id)} className="text-[rgb(var(--quaternary-rgb))] box-border border border-[rgb(var(--quaternary-rgb))] py-1 px-8 rounded-md">
                       Edit
                     </button>
                   </div>

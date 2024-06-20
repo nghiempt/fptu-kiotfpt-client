@@ -34,4 +34,7 @@ export const API = {
   GET_ALL_PROVINCE: `${HOST}/address/province/get-all`,
   GET_ALL_DISTRICT_BY_PROVINCE_ID: `${HOST}/address/district/get-all-by-province`,
   CREATE_ADDRESS: `${HOST}/address/create`,
+  UPDATE_PASSWORD: `${HOST}/profile/update-password`,
+  UPDATE_ADDRESS: `${HOST}/address/update`,
+  GET_ADDRESS_BY_ID: `${HOST}/address/get`,
 };

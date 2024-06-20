@@ -110,7 +110,7 @@ export default function Order() {
         <div className="flex flex-col gap-4">
           {orders?.map((item: any, index: any) => {
             return (
-              <div className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
+              <div key={index} className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
                 <div className="flex gap-x-2 text-gray-500">
                   <LocalShippingIcon />
                   {item?.status?.id === 27 && <h1>Successful Delivery</h1>}
@@ -123,8 +123,8 @@ export default function Order() {
                 <Divider className="pt-2" />
                 {item?.product?.map((item2: any, index: any) => {
                   return (
-                    <div className="w-full flex gap-x-2">
-                      <img className="rounded-md" src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" style={{ width: "10%" }} />
+                    <div key={index} className="w-full flex gap-x-2">
+                      <img className="rounded-md" src={item2?.thumbnail} alt="" style={{ width: "10%" }} />
                       <div className="w-full flex flex-col gap-2">
                         <div className="flex justify-between">
                           <h1 className="font-medium text-[14px]">

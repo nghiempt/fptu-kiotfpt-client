@@ -105,7 +105,7 @@ export default function Review() {
         <div className="flex flex-col gap-4">
           {[1, 2, 3]?.map((item: any, index: any) => {
             return (
-              <div className="w-full bg-gray-50 rounded-lg p-2">
+              <div key={index} className="w-full bg-gray-50 rounded-lg p-2">
                 <div className="w-full flex gap-x-2 items-start">
                   <img src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" className="w-1/6 rounded-md" />
                   <div className="w-5/6 flex flex-col gap-3 p-2">

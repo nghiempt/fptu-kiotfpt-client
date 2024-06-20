@@ -34,7 +34,7 @@ export default function Wishlist() {
       <div className="w-full rounded-md flex grid grid-cols-4 gap-4">
         {products.slice(0, 6)?.map((item: any, index: any) => {
           return (
-            <CardProduct item={item} index={index} limit={100} />
+            <CardProduct key={index} item={item} index={index} limit={100} />
           );
         })}
       </div>

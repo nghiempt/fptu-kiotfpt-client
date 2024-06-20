@@ -49,7 +49,7 @@ export default function Notify() {
             <h1 className="text-[14px] font-semibold">There is NO notification</h1></div>}
           {notifies?.map((item: any, index: any) => {
             return (
-              <div className="w-full pt-2">
+              <div key={index} className="w-full pt-2">
                 <div className="flex justify-between items-center">
                   <div className="flex gap-x-4 items-center">
                     <div>
