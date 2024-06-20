@@ -11,6 +11,7 @@ export const API = {
   GET_ALL_CATEGORIES: `${HOST}/category/get-all`,
   GET_POPULAR_CATEGORIES: `${HOST}/category/popular`,
   GET_PRODUCTS_TOPDEAL: `${HOST}/product/top-deal`,
+  GET_ALL_BRAND: `${HOST}/brand/get-all`,
   GET_POPULAR_SHOP: `${HOST}/shop/popular`,
   //
   ADD_TO_CART: `${HOST}/add-to-cart`,

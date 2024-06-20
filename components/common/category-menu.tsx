@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function CategoryMenu() {
   return (
-    <div className="w-full flex justify-center border mb-5 py-3">
+    <div className="w-full flex justify-center mb-5 py-3 bg-[rgb(var(--quaternary-rgb))] text-white">
       <div className="w-3/4 flex justify-between font-medium">
         <div className="flex gap-x-5">
           <div className="flex gap-x-2">
