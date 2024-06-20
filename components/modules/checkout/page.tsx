@@ -19,6 +19,21 @@ export default function Checkout() {
     setIsVoucherPopupOpen(false);
   };
 
+  const groupByShop = (cartData: any) => {
+    return cartData.reduce((acc: any, item: any) => {
+      const shopId = item?.shop?.id;
+      if (!acc[shopId]) {
+        acc[shopId] = {
+          shop: item?.shop,
+          products: [],
+        };
+      }
+      acc[shopId]?.products?.push(item);
+      return acc;
+    }, {});
+  };
+  const groupedData = groupByShop(cartData);
+
   useEffect(() => {
     setCartData(JSON.parse(cartDataStore || "") || []);
   }, []);
@@ -67,26 +82,24 @@ export default function Checkout() {
                 </div>
               </div>
               <div className="flex flex-col gap-4">
-                {cartData?.map((item: any, index: any) => {
-                  return (
-                    <div key={index}>
-                      <div className="bg-white rounded-lg border border-gray-200 box-border">
-                        <div className="w-full bg-gray-200 p-2 flex items-center gap-2 rounded-t-lg mb-2">
-                          
-                              <div
-                                key={index}
-                                className="flex items-center gap-2"
-                              >
-                                <img
-                                  src={item?.shop?.thumbnail}
-                                  alt="img"
-                                  style={{ width: 50 }}
-                                />
-                                <h1>{item?.shop?.name}</h1>
-                              </div>
-                            
+                {Object.values(groupedData).map((group: any, index: any) => (
+                  <div key={index}>
+                    <div className="bg-white rounded-lg border border-gray-200 box-border">
+                      <div className="w-full bg-gray-200 p-2 flex items-center gap-2 rounded-t-lg mb-2">
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={group?.shop?.thumbnail}
+                            alt="img"
+                            style={{ width: 50 }}
+                          />
+                          <h1>{group?.shop?.name}</h1>
                         </div>
-                        <div className="flex items-center justify-between px-4">
+                      </div>
+                      {group.products.map((item: any, productIndex: any) => (
+                        <div
+                          key={productIndex}
+                          className="flex items-center justify-between px-4"
+                        >
                           <div className="flex items-center">
                             <div className="mr-4 p-1 bg-gray-200 rounded-lg">
                               <img
@@ -117,22 +130,22 @@ export default function Checkout() {
                             </p>
                           </div>
                         </div>
-                        <div className="mt-4 flex items-center justify-between p-2">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-3 w-3 bg-[rgb(var(--quaternary-rgb))] rounded-full"></div>
-                            <p className="text-sm text-gray-700">
-                              Delivered tomorrow, before 7pm, May 17
-                            </p>
-                          </div>
-                          <div className="text-sm bg-blue-100 text-[rgb(var(--quaternary-rgb))] py-1 px-3 rounded-full">
-                            Delivered by KIOTFPT Smart Logistics (delivered from
-                            Can Tho)
-                          </div>
+                      ))}
+                      <div className="mt-4 flex items-center justify-between p-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="h-3 w-3 bg-[rgb(var(--quaternary-rgb))] rounded-full"></div>
+                          <p className="text-sm text-gray-700">
+                            Delivered tomorrow, before 7pm, May 17
+                          </p>
+                        </div>
+                        <div className="text-sm bg-blue-100 text-[rgb(var(--quaternary-rgb))] py-1 px-3 rounded-full">
+                          Delivered by KIOTFPT Smart Logistics (delivered from
+                          Can Tho)
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

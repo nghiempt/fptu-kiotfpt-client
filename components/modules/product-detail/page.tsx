@@ -49,7 +49,12 @@ export default function ProductDetail() {
   };
 
   const handleQuantityChange = (event: any) => {
-    setQuantity(event.target.value);
+    const amount = event.target.value;
+    setQuantity(amount);
+    setDataAddToCart((prevData) => ({
+      ...prevData,
+      amount: amount,
+    }));
   };
 
   const [currentProduct, setCurrentProduct] = useState({
@@ -101,6 +106,8 @@ export default function ProductDetail() {
         setCurrentProduct(proDetail?.data);
         setSelectedImage(currentProduct?.thumbnail[0]?.link);
       }
+      console.log(proDetail?.data);
+      
     };
     fetch();
   }, [currentProduct?.thumbnail[0]?.link]);
@@ -108,15 +115,20 @@ export default function ProductDetail() {
   useEffect(() => {
     if (selectedClassify) {
       setVariantId(selectedClassify?.id);
+        setDataAddToCart((prevData) => ({
+          ...prevData,
+          variant_id: selectedClassify?.id,
+        }));
     }
     console.log(variantId);
+    
   }, [selectedClassify, variantId]);
 
   const [dataAddToCart, setDataAddToCart] = useState({
     account_id: account_id,
     amount: quantity,
     note: note,
-    varient_id: variantId,
+    variant_id: variantId,
   });
   const handleNoteChange = (event: any) => {
     const newNote = event.target.value;

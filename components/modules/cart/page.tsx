@@ -25,41 +25,45 @@ type SelectedItems = {
   all: boolean;
   shops: { [key: number]: boolean };
   products: { [key: string]: boolean };
-  };
+};
 
-  type CartItem = {
-    shopIndex: number;
+interface Shop {
+  name: string;
+  thumbnail: string;
+}
+
+type CartItem = {
+  shopIndex: number;
+  id: string;
+  quantity: number;
+  note: string;
+  total: number;
+  shop: any[];
+
+  product: {
     id: string;
-    quantity: number;
-    note: string;
-    total: number;
-    shop: any[];
-    
-    product: {
-      id: string;
-      name: string;
-      thumbnail: any[];
-    };
-    variant: {
-      id: string;
-      price: number;
-      quantity: number;
-      color: {
-        id: string;
-        value: string;
-      };
-      size: {
-        id: string;
-        value: string;
-      };
-    }
-  };
-
-  type ShopItem = {
     name: string;
-    thumbnail: string;
+    thumbnail: any[];
   };
-  
+  variant: {
+    id: string;
+    price: number;
+    quantity: number;
+    color: {
+      id: string;
+      value: string;
+    };
+    size: {
+      id: string;
+      value: string;
+    };
+  };
+};
+
+type ShopItem = {
+  name: string;
+  thumbnail: string;
+};
 
 export default function Card() {
   const accountID = Cookie.get("accountID");
@@ -77,6 +81,7 @@ export default function Card() {
       if (c?.result) {
         setCart(c?.data);
       }
+      console.log(c?.data);
     };
     fetch();
   }, []);
@@ -101,84 +106,100 @@ export default function Card() {
 
   const handleSelectShop = (shopIndex: number) => {
     const newSelectedItems: SelectedItems = { ...selectedItems };
-  
+
     // Toggle shop selection status
     newSelectedItems.shops[shopIndex] = !newSelectedItems.shops[shopIndex];
-  
+
     // Update product selection status for the shop
-    cart[shopIndex].items.forEach((item:any, itemIndex:any) => {
-      newSelectedItems.products[`${shopIndex}-${itemIndex}`] = newSelectedItems.shops[shopIndex];
+    cart[shopIndex].items.forEach((item: any, itemIndex: any) => {
+      newSelectedItems.products[`${shopIndex}-${itemIndex}`] =
+        newSelectedItems.shops[shopIndex];
     });
-  
+
     // Update all selection status
-    newSelectedItems.all = cart.every((shop:any, index:any) =>
-      newSelectedItems.shops[index]
+    newSelectedItems.all = cart.every(
+      (shop: any, index: any) => newSelectedItems.shops[index]
     );
-  
+
     setSelectedItems(newSelectedItems);
   };
-  
 
   const handleSelectProduct = (shopIndex: number, itemIndex: number) => {
     const newSelectedItems = { ...selectedItems };
-    newSelectedItems.products[`${shopIndex}-${itemIndex}`] = !newSelectedItems.products[`${shopIndex}-${itemIndex}`];
-  
+    newSelectedItems.products[`${shopIndex}-${itemIndex}`] =
+      !newSelectedItems.products[`${shopIndex}-${itemIndex}`];
+
     // Update shop selection status
-    newSelectedItems.shops[shopIndex] = cart[shopIndex].items.every((item: any, i: number) => newSelectedItems.products[`${shopIndex}-${i}`]);
-  
+    newSelectedItems.shops[shopIndex] = cart[shopIndex].items.every(
+      (item: any, i: number) => newSelectedItems.products[`${shopIndex}-${i}`]
+    );
+
     // Update all selection status
     const allProductsSelected = cart.every((shop: any, sIndex: number) =>
-      shop.items.every((item: any, iIndex: number) => newSelectedItems.products[`${sIndex}-${iIndex}`])
+      shop.items.every(
+        (item: any, iIndex: number) =>
+          newSelectedItems.products[`${sIndex}-${iIndex}`]
+      )
     );
-    
+
     newSelectedItems.all = allProductsSelected;
-  
+
     setSelectedItems(newSelectedItems);
   };
 
   const getSelectedProductsInfo = (): CartItem[] => {
     const selectedProductsInfo: CartItem[] = [];
-  
+
     cart.forEach((section: any, shopIndex: any) => {
-      section.items.forEach((item: CartItem, itemIndex: any) => {
-        const productKey = `${shopIndex}-${itemIndex}`;
-        if (selectedItems.products[productKey]) {
-          selectedProductsInfo.push({ ...item, shopIndex });
+      section?.items?.forEach((item: any, itemIndex: any) => {
+        if (selectedItems.products[`${shopIndex}-${itemIndex}`]) {
+          selectedProductsInfo.push({
+            id: item?.id,
+            quantity: item?.quantity,
+            note: item?.note,
+            total: item?.total,
+            shopIndex: shopIndex,
+            shop: section?.shop,
+            product: item?.product,
+            variant: item?.variant,
+          });
         }
       });
     });
-  
+
     return selectedProductsInfo;
   };
-  
+
   const getSelectedShopInfo = (): { [key: string]: ShopItem } => {
-    const selectedShopInfo: { [key: string]: ShopItem } = {};
+  const selectedShopInfo: { [key: string]: ShopItem } = {};
+  cart.forEach((section: any, shopIndex: any) => {
+    if (selectedItems.shops[shopIndex]) {
+      selectedShopInfo[shopIndex] = {
+        name: section?.shop?.name,
+        thumbnail: section?.shop?.thumbnail,
+      };
+    }
+  });
   
-    cart.forEach((section: any, shopIndex: any) => {
-      if (selectedItems.shops[shopIndex]) {
-        selectedShopInfo[shopIndex] = {
-          name: section?.shop?.name,
-          thumbnail: section?.shop?.thumbnail,
-        };
-      }
-    });
+  return selectedShopInfo;
+}
   
-    return selectedShopInfo;
-  };
-  
+
   const selectedProducts = getSelectedProductsInfo();
   const selectedShopInfo = getSelectedShopInfo();
-  
-  const cartItems = selectedProducts.map((product) => {
-    const shop = selectedShopInfo[product.shopIndex];
-  
+
+  const cartItems = selectedProducts.map((product:any) => {
+
+    
+    const shop = selectedShopInfo[product?.shopIndex];
+
     return {
       id: product?.id,
       quantity: product?.quantity,
       note: product?.note,
       total: product?.total,
       shop: shop, // Assign the correct shop info
-  
+
       product: {
         id: product?.product?.id,
         name: product?.product?.name,
@@ -199,17 +220,12 @@ export default function Card() {
       },
     };
   });
-  
 
-  React.useEffect(() => { 
+  React.useEffect(() => {
     console.log(selectedProducts);
-    console.log(cart);
     
-    
-    localStorage.setItem('dataCart', JSON.stringify(cartItems));
-    localStorage.removeItem('selectedCartItems');
-  }, [selectedProducts]);
-  
+    localStorage.setItem("dataCart", JSON.stringify(selectedProducts));
+  }, [selectedProducts, selectedShopInfo]);
 
   return (
     <div className="w-full pt-4 flex flex-col justify-center items-center">
@@ -221,24 +237,49 @@ export default function Card() {
         <div className="w-full border border-gray-200 rounded-md px-6 py-3 my-5">
           <div className="w-full flex flex-col justify-center items-center gap-6">
             <div className="w-full p-4">
-              <input type="checkbox" checked={selectedItems.all} onChange={handleSelectAll} />
+              <input
+                type="checkbox"
+                checked={selectedItems.all}
+                onChange={handleSelectAll}
+              />
               <label className="ml-2 font-bold">Select All</label>
             </div>
             {cart?.map((section: any, shopIndex: number) => {
               return (
                 <div key={shopIndex} className="w-full p-4">
                   <div className="w-full bg-gray-100 p-2 flex items-center gap-2 rounded-lg">
-                    <input type="checkbox" checked={selectedItems.shops[shopIndex] || false} onChange={() => handleSelectShop(shopIndex)} />
-                    <img src={section?.shop?.thumbnail} alt="img" style={{ width: 50 }} />
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.shops[shopIndex] || false}
+                      onChange={() => handleSelectShop(shopIndex)}
+                    />
+                    <img
+                      src={section?.shop?.thumbnail}
+                      alt="img"
+                      style={{ width: 50 }}
+                    />
                     <h1>{section?.shop?.name}</h1>
                   </div>
                   {section?.items?.map((item: any, itemIndex: number) => {
                     return (
-                      <div key={itemIndex} className="w-full flex justify-between pl-5 box-border">
+                      <div
+                        key={itemIndex}
+                        className="w-full flex justify-between pl-5 box-border"
+                      >
                         <div className="flex justify-center items-center gap-x-5">
-                          <input type="checkbox" checked={selectedItems.products[`${shopIndex}-${itemIndex}`] || false} onChange={() => handleSelectProduct(shopIndex, itemIndex)} />
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedItems.products[
+                                `${shopIndex}-${itemIndex}`
+                              ] || false
+                            }
+                            onChange={() =>
+                              handleSelectProduct(shopIndex, itemIndex)
+                            }
+                          />
                           <img
-                            src={item?.product?.thumbnail[itemIndex]?.link}
+                            src={item?.product?.thumbnail[0]?.link}
                             alt="img"
                             style={{
                               width: 100,
@@ -250,8 +291,13 @@ export default function Card() {
                             </div>
                             <div className="font-regular text-gray-500 mb-2">
                               <div>
-                                <span>Color: {item?.repo?.color?.value}</span>
-                                <span> / Size: {item?.repo?.size?.value}</span>
+                                <span>
+                                  Color: {item?.variant?.color?.value}
+                                </span>
+                                <span>
+                                  {" "}
+                                  / Size: {item?.variant?.size?.value}
+                                </span>
                               </div>
                             </div>
 
