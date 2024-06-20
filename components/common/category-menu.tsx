@@ -19,7 +19,14 @@ export default function CategoryMenu() {
           <Link href={ROUTE.PRODUCT}>Top Deals</Link>
           <Link href={ROUTE.PRODUCT}>Popular Brand</Link>
           <Link href={ROUTE.PRODUCT}>Popular Category</Link>
-          <Link href={ROUTE.PRODUCT}>Discount</Link>
+          <Link
+            href={{
+              pathname: ROUTE.PRODUCT,
+              query: { filter: "discount" }
+            }}
+          >
+            Discount
+          </Link>
           <div className="flex">
             <div>Help&nbsp;</div>
             <ExpandMoreIcon />

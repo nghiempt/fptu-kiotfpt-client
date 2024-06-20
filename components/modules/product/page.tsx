@@ -19,12 +19,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import CardProduct from "@/components/common/card-product";
 import CategoryMenu from "@/components/common/category-menu";
 import { ProductService } from "@/service/product";
+import { useSearchParams } from "next/navigation";
 
 function valuetext(value: any) {
   return `${value}°C`;
 }
 
 export default function Product() {
+
+  const searchParam = useSearchParams();
 
   const [value, setValue] = React.useState([20, 37]);
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -75,7 +78,22 @@ export default function Product() {
     const fetch = async () => {
       const pros = await ProductService.searchProduct("", "1", "16");
       if (pros?.result) {
-        setProducts(pros?.data);
+        switch (searchParam.get('filter')) {
+          case 'discount':
+            let tmp: any = [];
+            pros?.data?.forEach((item: any) => {
+              console.log(item);
+              
+              if (item?.discount > 0) {
+                tmp.push(item);
+              }
+            });
+            setProducts(tmp);
+            break;
+          default:
+            setProducts(pros?.data);
+            break;
+        }
       }
     }
     fetch();
