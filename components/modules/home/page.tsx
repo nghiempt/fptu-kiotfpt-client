@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useContext } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import { ROUTE } from "@/constant/route";
@@ -203,7 +202,7 @@ export default function Home() {
       </div>
       <div className="w-3/4 flex mb-5 mt-8 flex-col">
         <h1 className="font-black text-xl text-gray-700">Popular Category</h1>
-        <div className="flex grid grid-cols-10 mt-4 gap-4">
+        <div className=" grid grid-cols-10 mt-4 gap-4">
           {popularCategories?.map((item: any, index: any) => {
             return (
               <Link href={ROUTE.PRODUCT} key={index} className="flex border border-[#E0E0E0] rounded-lg items-center justify-center">
@@ -272,7 +271,7 @@ export default function Home() {
       </div>
       <div className="w-3/4 flex flex-col my-5">
         <h1 className="font-black text-xl text-gray-700 pb-4">Popular Brand</h1>
-        <div className="flex grid grid-cols-6 gap-x-24 pb-4">
+        <div className=" grid grid-cols-6 gap-x-24 pb-4">
           {FAKE.BRANDS.slice(0, 6)?.map((item: any, index: any) => {
             return (
               <Link href={ROUTE.PRODUCT} key={index} className="flex gap-x-2 items-center">
@@ -290,7 +289,7 @@ export default function Home() {
             );
           })}
         </div>
-        <div className="flex grid grid-cols-6 gap-x-24 mt-2">
+        <div className=" grid grid-cols-6 gap-x-24 mt-2">
           {FAKE.BRANDS.slice(6, 12)?.map((item: any, index: any) => {
             return (
               <div key={index} className="flex gap-x-2 items-center">

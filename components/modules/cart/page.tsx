@@ -4,122 +4,347 @@ import React from "react";
 import { Divider } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
-import EuroIcon from '@mui/icons-material/Euro';
-import PixIcon from '@mui/icons-material/Pix';
-import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import StyleIcon from '@mui/icons-material/Style';
+import EuroIcon from "@mui/icons-material/Euro";
+import PixIcon from "@mui/icons-material/Pix";
+import PriceChangeIcon from "@mui/icons-material/PriceChange";
+import StyleIcon from "@mui/icons-material/Style";
 import LockIcon from "@mui/icons-material/Lock";
 import MessageIcon from "@mui/icons-material/Message";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import Link from "next/link";
 import { ROUTE } from "@/constant/route";
 import SuperDiscount from "@/components/common/super-discount";
-import DeleteIcon from '@mui/icons-material/Delete';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import DeleteIcon from "@mui/icons-material/Delete";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import CardProduct from "@/components/common/card-product";
 import CategoryMenu from "@/components/common/category-menu";
-import Cookie from 'js-cookie';
+import Cookie from "js-cookie";
 import { CartService } from "@/service/cart";
 
-export default function Card() {
+type SelectedItems = {
+  all: boolean;
+  shops: { [key: number]: boolean };
+  products: { [key: string]: boolean };
+};
 
-  const accountID = Cookie.get('accountID');
+interface Shop {
+  name: string;
+  thumbnail: string;
+}
+
+type CartItem = {
+  shopIndex: number;
+  id: string;
+  quantity: number;
+  note: string;
+  total: number;
+  shop: any[];
+
+  product: {
+    id: string;
+    name: string;
+    thumbnail: any[];
+  };
+  variant: {
+    id: string;
+    price: number;
+    quantity: number;
+    color: {
+      id: string;
+      value: string;
+    };
+    size: {
+      id: string;
+      value: string;
+    };
+  };
+};
+
+type ShopItem = {
+  name: string;
+  thumbnail: string;
+};
+
+export default function Card() {
+  const accountID = Cookie.get("accountID");
 
   const [cart, setCart] = React.useState([] as any);
+  const [selectedItems, setSelectedItems] = React.useState<any>({
+    all: false,
+    shops: {},
+    products: {},
+  });
 
   React.useEffect(() => {
     const fetch = async () => {
       const c = await CartService.getCartByID(JSON.parse(accountID || ""));
       if (c?.result) {
         setCart(c?.data);
-        localStorage.setItem('cart', JSON.stringify(c?.data));
       }
-    }
+      console.log(c?.data);
+    };
     fetch();
   }, []);
+
+  const handleSelectAll = () => {
+    const newSelectedItems = { ...selectedItems };
+    newSelectedItems.all = !selectedItems.all;
+    newSelectedItems.shops = {};
+    newSelectedItems.products = {};
+
+    if (newSelectedItems.all) {
+      cart.forEach((shop: any, shopIndex: number) => {
+        newSelectedItems.shops[shopIndex] = true;
+        shop.items.forEach((item: any, itemIndex: number) => {
+          newSelectedItems.products[`${shopIndex}-${itemIndex}`] = true;
+        });
+      });
+    }
+
+    setSelectedItems(newSelectedItems);
+  };
+
+  const handleSelectShop = (shopIndex: number) => {
+    const newSelectedItems: SelectedItems = { ...selectedItems };
+
+    // Toggle shop selection status
+    newSelectedItems.shops[shopIndex] = !newSelectedItems.shops[shopIndex];
+
+    // Update product selection status for the shop
+    cart[shopIndex].items.forEach((item: any, itemIndex: any) => {
+      newSelectedItems.products[`${shopIndex}-${itemIndex}`] =
+        newSelectedItems.shops[shopIndex];
+    });
+
+    // Update all selection status
+    newSelectedItems.all = cart.every(
+      (shop: any, index: any) => newSelectedItems.shops[index]
+    );
+
+    setSelectedItems(newSelectedItems);
+  };
+
+  const handleSelectProduct = (shopIndex: number, itemIndex: number) => {
+    const newSelectedItems = { ...selectedItems };
+    newSelectedItems.products[`${shopIndex}-${itemIndex}`] =
+      !newSelectedItems.products[`${shopIndex}-${itemIndex}`];
+
+    // Update shop selection status
+    newSelectedItems.shops[shopIndex] = cart[shopIndex].items.every(
+      (item: any, i: number) => newSelectedItems.products[`${shopIndex}-${i}`]
+    );
+
+    // Update all selection status
+    const allProductsSelected = cart.every((shop: any, sIndex: number) =>
+      shop.items.every(
+        (item: any, iIndex: number) =>
+          newSelectedItems.products[`${sIndex}-${iIndex}`]
+      )
+    );
+
+    newSelectedItems.all = allProductsSelected;
+
+    setSelectedItems(newSelectedItems);
+  };
+
+  const getSelectedProductsInfo = (): CartItem[] => {
+    const selectedProductsInfo: CartItem[] = [];
+
+    cart.forEach((section: any, shopIndex: any) => {
+      section?.items?.forEach((item: any, itemIndex: any) => {
+        if (selectedItems.products[`${shopIndex}-${itemIndex}`]) {
+          selectedProductsInfo.push({
+            id: item?.id,
+            quantity: item?.quantity,
+            note: item?.note,
+            total: item?.total,
+            shopIndex: shopIndex,
+            shop: section?.shop,
+            product: item?.product,
+            variant: item?.variant,
+          });
+        }
+      });
+    });
+
+    return selectedProductsInfo;
+  };
+
+  const getSelectedShopInfo = (): { [key: string]: ShopItem } => {
+  const selectedShopInfo: { [key: string]: ShopItem } = {};
+  cart.forEach((section: any, shopIndex: any) => {
+    if (selectedItems.shops[shopIndex]) {
+      selectedShopInfo[shopIndex] = {
+        name: section?.shop?.name,
+        thumbnail: section?.shop?.thumbnail,
+      };
+    }
+  });
+  
+  return selectedShopInfo;
+}
+  
+
+  const selectedProducts = getSelectedProductsInfo();
+  const selectedShopInfo = getSelectedShopInfo();
+
+  const cartItems = selectedProducts.map((product:any) => {
+
+    
+    const shop = selectedShopInfo[product?.shopIndex];
+
+    return {
+      id: product?.id,
+      quantity: product?.quantity,
+      note: product?.note,
+      total: product?.total,
+      shop: shop, // Assign the correct shop info
+
+      product: {
+        id: product?.product?.id,
+        name: product?.product?.name,
+        thumbnail: product?.product?.thumbnail,
+      },
+      variant: {
+        id: product?.variant?.id,
+        price: product?.variant?.price,
+        quantity: product?.variant?.quantity,
+        color: {
+          id: product?.variant?.color?.id,
+          value: product?.variant?.color?.value,
+        },
+        size: {
+          id: product?.variant?.size?.id,
+          value: product?.variant?.size?.value,
+        },
+      },
+    };
+  });
+
+  React.useEffect(() => {
+    console.log(selectedProducts);
+    
+    localStorage.setItem("dataCart", JSON.stringify(selectedProducts));
+  }, [selectedProducts, selectedShopInfo]);
 
   return (
     <div className="w-full pt-4 flex flex-col justify-center items-center">
       <CategoryMenu />
-      <div className="w-3/4 flex justify-start font-black text-2xl text-gray-700">My Cart ()</div>
+      <div className="w-3/4 flex justify-start font-black text-2xl text-gray-700">
+        My Cart
+      </div>
       <div className="w-3/4 flex gap-x-4">
         <div className="w-full border border-gray-200 rounded-md px-6 py-3 my-5">
           <div className="w-full flex flex-col justify-center items-center gap-6">
-            {
-              cart?.map((section: any, index: any) => {
-                return (
-                  <div key={index} className="w-full p-4">
-                    <div className="w-full bg-gray-100 p-2 flex items-center gap-2 rounded-lg">
-                      <img src={section?.shop?.thumbnail} alt="img" style={{ width: 50 }} />
-                      <h1>{section?.shop?.name}</h1>
-                    </div>
-                    {section?.items?.map((item: any, index: any) => {
-                      return (
-                        <div key={index} className="w-full flex justify-between">
-                          <div className="flex justify-center items-center gap-x-5">
-                            <img
-                              src={section?.shop?.thumbnail}
-                              alt="img"
-                              style={{
-                                width: 100,
-                              }}
-                            />
-                            <div>
-                              <div className="font-medium text-[16px] mb-1">
-                                {section?.shop?.name}
+            <div className="w-full p-4">
+              <input
+                type="checkbox"
+                checked={selectedItems.all}
+                onChange={handleSelectAll}
+              />
+              <label className="ml-2 font-bold">Select All</label>
+            </div>
+            {cart?.map((section: any, shopIndex: number) => {
+              return (
+                <div key={shopIndex} className="w-full p-4">
+                  <div className="w-full bg-gray-100 p-2 flex items-center gap-2 rounded-lg">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.shops[shopIndex] || false}
+                      onChange={() => handleSelectShop(shopIndex)}
+                    />
+                    <img
+                      src={section?.shop?.thumbnail}
+                      alt="img"
+                      style={{ width: 50 }}
+                    />
+                    <h1>{section?.shop?.name}</h1>
+                  </div>
+                  {section?.items?.map((item: any, itemIndex: number) => {
+                    return (
+                      <div
+                        key={itemIndex}
+                        className="w-full flex justify-between pl-5 box-border"
+                      >
+                        <div className="flex justify-center items-center gap-x-5">
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedItems.products[
+                                `${shopIndex}-${itemIndex}`
+                              ] || false
+                            }
+                            onChange={() =>
+                              handleSelectProduct(shopIndex, itemIndex)
+                            }
+                          />
+                          <img
+                            src={item?.product?.thumbnail[0]?.link}
+                            alt="img"
+                            style={{
+                              width: 100,
+                            }}
+                          />
+                          <div>
+                            <div className="font-medium text-[16px] mb-1">
+                              {item?.product?.name}
+                            </div>
+                            <div className="font-regular text-gray-500 mb-2">
+                              <div>
+                                <span>
+                                  Color: {item?.variant?.color?.value}
+                                </span>
+                                <span>
+                                  {" "}
+                                  / Size: {item?.variant?.size?.value}
+                                </span>
                               </div>
-                              <div className="font-regular text-gray-500 mb-2">
-                                <div>
-                                  <span>Color: {item?.repo?.color?.value}</span>
-                                  <span> / Size: {item?.repo?.size?.value}</span>
-                                </div>
-                              </div>
+                            </div>
 
-                              <div className="flex gap-x-2">
-                                <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white">
-                                  <DeleteIcon />
-                                </div>
-                                <div className="bg-[rgb(var(--quaternary-rgb))] p-1 rounded-md text-white">
-                                  <BookmarkIcon />
-                                </div>
+                            <div className="flex gap-x-2">
+                              <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white">
+                                <DeleteIcon />
                               </div>
-                            </div>
-                          </div>
-                          <div className="my-5">
-                            <div className="mb-2 text-right text-xl font-semibold">
-                              ${item?.total}
-                            </div>
-                            <div className="flex">
-                              <div className="flex justify-end gap-x-1">
-                                <button
-                                  type="submit"
-                                  className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
-                                  style={{ color: "gray" }}
-                                >
-                                  -
-                                </button>
-                                <input
-                                  type="text"
-                                  className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sx bg-[rgb(var(--quaternary-rgb))]"
-                                  value="1"
-                                />
-                                <button
-                                  type="submit"
-                                  className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
-                                  style={{ color: "gray" }}
-                                >
-                                  +
-                                </button>
+                              <div className="bg-[rgb(var(--quaternary-rgb))] p-1 rounded-md text-white">
+                                <BookmarkIcon />
                               </div>
                             </div>
                           </div>
                         </div>
-                      )
-                    })}
-                  </div>
-                )
-              })
-            }
+                        <div className="my-5">
+                          <div className="mb-2 text-right text-xl font-semibold">
+                            ${item?.total}
+                          </div>
+                          <div className="flex">
+                            <div className="flex justify-end gap-x-1">
+                              <button
+                                type="submit"
+                                className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
+                                style={{ color: "gray" }}
+                              >
+                                -
+                              </button>
+                              <input
+                                type="text"
+                                className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sx bg-[rgb(var(--quaternary-rgb))]"
+                                value="1"
+                              />
+                              <button
+                                type="submit"
+                                className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
+                                style={{ color: "gray" }}
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
           <div className="flex justify-between pt-8 pb-4">
             <button
@@ -181,7 +406,6 @@ export default function Card() {
                   PAY
                 </button>
               </Link>
-
             </div>
             <div className="flex p-2 gap-2">
               <CreditCardIcon />
@@ -233,12 +457,12 @@ export default function Card() {
       </div>
       <div className="w-3/4 mt-6 mb-10">
         <div className="">
-          <h1 className="font-black text-2xl mb-4 text-gray-700">Related Products</h1>
-          <div className="flex grid grid-cols-5 gap-x-4">
+          <h1 className="font-black text-2xl mb-4 text-gray-700">
+            Related Products
+          </h1>
+          <div className="grid grid-cols-5 gap-x-4">
             {[].slice(0, 5)?.map((item: any, index: any) => {
-              return (
-                <CardProduct item={item} index={index} limit={100} />
-              );
+              return <CardProduct item={item} index={index} limit={100} />;
             })}
           </div>
         </div>
