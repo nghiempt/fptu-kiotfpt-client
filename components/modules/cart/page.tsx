@@ -28,16 +28,19 @@ type SelectedItems = {
   };
 
   type CartItem = {
+    shopIndex: number;
     id: string;
     quantity: number;
     note: string;
     total: number;
+    shop: any[];
+    
     product: {
       id: string;
       name: string;
       thumbnail: any[];
     };
-    repo: {
+    variant: {
       id: string;
       price: number;
       quantity: number;
@@ -50,6 +53,11 @@ type SelectedItems = {
         value: string;
       };
     }
+  };
+
+  type ShopItem = {
+    name: string;
+    thumbnail: string;
   };
   
 
@@ -131,47 +139,72 @@ export default function Card() {
   const getSelectedProductsInfo = (): CartItem[] => {
     const selectedProductsInfo: CartItem[] = [];
   
-    cart.forEach((shop:any, shopIndex:any) => {
-      shop.items.forEach((item: CartItem, itemIndex:any) => {
+    cart.forEach((section: any, shopIndex: any) => {
+      section.items.forEach((item: CartItem, itemIndex: any) => {
         const productKey = `${shopIndex}-${itemIndex}`;
         if (selectedItems.products[productKey]) {
-          selectedProductsInfo.push(item);
+          selectedProductsInfo.push({ ...item, shopIndex });
         }
       });
     });
   
-    return selectedProductsInfo;   
+    return selectedProductsInfo;
   };
+  
+  const getSelectedShopInfo = (): { [key: string]: ShopItem } => {
+    const selectedShopInfo: { [key: string]: ShopItem } = {};
+  
+    cart.forEach((section: any, shopIndex: any) => {
+      if (selectedItems.shops[shopIndex]) {
+        selectedShopInfo[shopIndex] = {
+          name: section?.shop?.name,
+          thumbnail: section?.shop?.thumbnail,
+        };
+      }
+    });
+  
+    return selectedShopInfo;
+  };
+  
   const selectedProducts = getSelectedProductsInfo();
+  const selectedShopInfo = getSelectedShopInfo();
+  
   const cartItems = selectedProducts.map((product) => {
+    const shop = selectedShopInfo[product.shopIndex];
+  
     return {
       id: product?.id,
       quantity: product?.quantity,
       note: product?.note,
       total: product?.total,
+      shop: shop, // Assign the correct shop info
+  
       product: {
         id: product?.product?.id,
         name: product?.product?.name,
         thumbnail: product?.product?.thumbnail,
       },
-      repo: {
-        id: product?.repo?.id,
-        price: product?.repo?.price,
-        quantity: product?.repo?.quantity,
+      variant: {
+        id: product?.variant?.id,
+        price: product?.variant?.price,
+        quantity: product?.variant?.quantity,
         color: {
-          id: product?.repo?.color?.id,
-          value: product?.repo?.color?.value,
+          id: product?.variant?.color?.id,
+          value: product?.variant?.color?.value,
         },
         size: {
-          id: product?.repo?.size?.id,
-          value: product?.repo?.size?.value,
+          id: product?.variant?.size?.id,
+          value: product?.variant?.size?.value,
         },
       },
     };
   });
+  
 
   React.useEffect(() => { 
     console.log(selectedProducts);
+    console.log(cart);
+    
     
     localStorage.setItem('dataCart', JSON.stringify(cartItems));
     localStorage.removeItem('selectedCartItems');
