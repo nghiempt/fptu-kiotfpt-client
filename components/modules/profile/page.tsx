@@ -50,7 +50,7 @@ export default function Profile() {
               <img src="https://cdn-icons-png.flaticon.com/128/3135/3135715.png" alt="avatar" className="rounded-full w-12 h-12" />
             </div>
             <div>
-              <h1>Noname</h1>
+              <h1>Henry Ambus</h1>
               <h1 className="text-xs text-gray-400 mt-[1px]">nghiempt.dev+5@gmail.com</h1>
             </div>
           </div>

@@ -67,7 +67,7 @@ export default function AccountProfile() {
           <h1 className="text-[14px] font-semibold">Personal Information</h1>
           <div className="flex w-full gap-x-2 justify-between items-center">
             <div className="w-1/5 cursor-pointer relative">
-              <img src={img} alt="avatar" className="rounded-full w-16 h-16" />
+              <img src={profile?.thumbnail} alt="avatar" className="rounded-full w-16 h-16" />
               <input type="file" className="absolute" onChange={handleUpload} />
             </div>
             <div className="w-4/5 flex flex-col justify-center items-start gap-2">

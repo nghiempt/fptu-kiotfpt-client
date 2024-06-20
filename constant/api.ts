@@ -21,7 +21,6 @@ export const API = {
   //
   GET_SHOP_BY_ID: `${HOST}/shop/profile`,
   GET_PRODUCT_BY_SHOP_ID: `${HOST}/product/get-by-shop`,
-
   // Profile page
   GET_PROFILE_BY_ID: `${HOST}/profile`,
   UPDATE_PROFILE: `${HOST}/profile/update-profile`,
