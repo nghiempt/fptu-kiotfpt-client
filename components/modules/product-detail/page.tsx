@@ -32,7 +32,9 @@ export default function ProductDetail() {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU";
   const [hoveredImage, setHoveredImage] = useState(null);
   const accountID = Cookie.get("accountID");
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([
+    
+  ]);
   const account_id = JSON.parse(accountID || "");
   const [selectedClassify, setSelectedClassify] = useState<{ id: any } | null>(
     null
@@ -483,12 +485,10 @@ export default function ProductDetail() {
                     <h1 className="text-gray-700 text-[14px] font-semibold">
                       {item?.name}
                     </h1>
-                    <h1 className="text-gray-500">{item?.price}</h1>
+                    <h1 className="text-gray-500">{item?.minPrice === item?.maxPrice
+                  ? `$${item?.minPrice}`
+                  : `$${item?.minPrice} - $${item?.maxPrice}`}</h1>
                     <h1 className="text-gray-500">{item?.sold} sold</h1>
-                    <div className="flex gap-1 justify-start items-center">
-                      <CheckIcon />
-                      <h1>Official</h1>
-                    </div>
                   </div>
                 </div>
               );
