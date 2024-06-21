@@ -2,6 +2,8 @@
 
 import CategoryMenu from "@/components/common/category-menu";
 import VoucherModal from "@/components/pop-up/voucher-modal";
+import { CheckoutService } from "@/service/checkout";
+import Cookie from "js-cookie";
 import { Divider } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -10,6 +12,8 @@ export default function Checkout() {
 
   const [isVoucherPopupOpen, setIsVoucherPopupOpen] = useState(false);
   const [cartData, setCartData] = React.useState([] as any);
+  const accountID = Cookie.get("accountID");
+  const [address, setAddress] = useState([] as any);
 
   const handleOpenVoucherPopup = () => {
     setIsVoucherPopupOpen(true);
@@ -32,6 +36,19 @@ export default function Checkout() {
       return acc;
     }, {});
   };
+  React.useEffect(() => {
+    const fetch = async () => {
+      const a = await CheckoutService.getAllAddressByAccountID(
+        JSON.parse(accountID || "")
+      );
+      if (a?.result) {
+        setAddress(a?.data);
+      }
+      console.log(address);
+    };
+    fetch();
+  }, []);
+
   const groupedData = groupByShop(cartData);
 
   useEffect(() => {
@@ -114,7 +131,7 @@ export default function Checkout() {
                                 {item?.product?.name}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Quantity: {item?.variant?.quantity}
+                                Quantity: {item?.quantity}
                               </p>
                               <p className="text-xs text-gray-500">
                                 Color: {item?.variant?.color?.value}
@@ -125,24 +142,10 @@ export default function Checkout() {
                             </div>
                           </div>
                           <div className="text-right flex flex-col gap-1">
-                            <p className="text-lg font-bold">
-                              ${item?.variant?.price * item?.variant?.quantity}
-                            </p>
+                            <p className="text-lg font-bold">${item?.total}</p>
                           </div>
                         </div>
                       ))}
-                      <div className="mt-4 flex items-center justify-between p-2">
-                        <div className="flex items-center space-x-2">
-                          <div className="h-3 w-3 bg-[rgb(var(--quaternary-rgb))] rounded-full"></div>
-                          <p className="text-sm text-gray-700">
-                            Delivered tomorrow, before 7pm, May 17
-                          </p>
-                        </div>
-                        <div className="text-sm bg-blue-100 text-[rgb(var(--quaternary-rgb))] py-1 px-3 rounded-full">
-                          Delivered by KIOTFPT Smart Logistics (delivered from
-                          Can Tho)
-                        </div>
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -163,9 +166,17 @@ export default function Checkout() {
                         name="deliveryOption"
                         className="form-radio h-5 w-5 text-blue-600"
                       />
-                      <div className="ml-2">
+                      <div className="ml-2 flex items-center">
                         <span className="text-sm font-semibold ml-1">
-                          200 Tô Vĩnh Diện, Long Tuyền, Bình Thuỷ, Cần Thơ
+                          {address?.map((address: any, index: any) => {
+                            return (
+                              <div key={index}>
+                                {address?.address_value},{" "}
+                                {address?.district?.district_value},{" "}
+                                {address?.province?.province_value}
+                              </div>
+                            );
+                          })}
                         </span>
                         <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
                           default

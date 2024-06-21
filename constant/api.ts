@@ -23,4 +23,6 @@ export const API = {
   //
   GET_PROFILE_BY_ID: `${HOST}/profile`,
   UPDATE_PROFILE: `${HOST}/profile/update-profile`,
+  //
+  GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
 };

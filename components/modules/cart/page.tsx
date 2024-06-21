@@ -69,6 +69,7 @@ export default function Card() {
   const accountID = Cookie.get("accountID");
 
   const [cart, setCart] = React.useState([] as any);
+  const [totalProduct, setTotalProduct] = React.useState(0);
   const [selectedItems, setSelectedItems] = React.useState<any>({
     all: false,
     shops: {},
@@ -223,7 +224,8 @@ export default function Card() {
 
   React.useEffect(() => {
     console.log(selectedProducts);
-    
+    const t = selectedProducts.reduce((sum, product) => sum + (product?.total || 0), 0);
+    setTotalProduct(t);  
     localStorage.setItem("dataCart", JSON.stringify(selectedProducts));
   }, [selectedProducts, selectedShopInfo]);
 
@@ -290,6 +292,14 @@ export default function Card() {
                               {item?.product?.name}
                             </div>
                             <div className="font-regular text-gray-500 mb-2">
+                              
+                                <span>
+                                  Price: ${item?.variant?.price}
+                                </span>
+                                
+                              
+                            </div>
+                            <div className="font-regular text-gray-500 mb-2">
                               <div>
                                 <span>
                                   Color: {item?.variant?.color?.value}
@@ -327,7 +337,7 @@ export default function Card() {
                               <input
                                 type="text"
                                 className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sx bg-[rgb(var(--quaternary-rgb))]"
-                                value="1"
+                                value={item?.quantity}
                               />
                               <button
                                 type="submit"
@@ -365,36 +375,18 @@ export default function Card() {
           </div>
         </div>
         <div className="w-1/4">
-          <div className="border border-gray-200 rounded-md p-3 pb-2 mt-5">
-            <div>Have a coupon?</div>
-            <div className="flex my-2">
-              <input
-                type="text"
-                placeholder="Add a coupon"
-                className="w-1/2 px-4 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:border-blue-500"
-              />
-              <button className="px-4 py-2 bg-[rgb(var(--quaternary-rgb))] text-white border-t border-r border-b border-[rgb(var(--quaternary-rgb))] rounded-r-md hover:font-bold">
-                Apply
-              </button>
-            </div>
-          </div>
+          
           <div className="border border-gray-200 rounded-md p-5 mt-4">
             <div className="flex justify-between">
               <div className="pb-1 text-[16px]">Subtotal</div>
               <div className="text-black pb-1 text-[16px] text-left font-semibold"></div>
             </div>
-            <div className="flex justify-between">
-              <div className="pb-1 text-[16px]">Discount</div>
-              <div className="text-[rgb(var(--primary-rgb))] pb-1 text-[16px] text-left font-semibold"></div>
-            </div>
-            <div className="flex justify-between">
-              <div className="pb-1 text-[16px]">Tax</div>
-              <div className="text-[rgb(var(--tertiary-rgb))] pb-1 text-[16px] text-left font-semibold"></div>
-            </div>
+            
+            
             <Divider className="pt-2" />
             <div className="flex justify-between font-bold pt-2">
               <div className="text-[18px]">Total</div>
-              <div className="text-[18px] font-bold"></div>
+              <div className="text-[18px] font-bold">${totalProduct}</div>
             </div>
             <div className="my-2">
               <Link
