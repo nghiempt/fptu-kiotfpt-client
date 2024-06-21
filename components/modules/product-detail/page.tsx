@@ -32,9 +32,7 @@ export default function ProductDetail() {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed7ytmvKOdAhKD4DibQ3xEuFuBozev9PjLp3a00xpu94MUrWzIcX_pideQYkSK91kydw&usqp=CAU";
   const [hoveredImage, setHoveredImage] = useState(null);
   const accountID = Cookie.get("accountID");
-  const [products, setProducts] = useState([
-    
-  ]);
+  const [products, setProducts] = useState([]);
   const account_id = JSON.parse(accountID || "");
   const [selectedClassify, setSelectedClassify] = useState<{ id: any } | null>(
     null
@@ -49,10 +47,10 @@ export default function ProductDetail() {
     return formattedDate;
   };
   const states = [
-    { key: "bestSeller", label: "Best Seller" },
-    { key: "official", label: "Official" },
-    { key: "topDeal", label: "Top Deal" },
-    { key: "popular", label: "Popular" },
+    { key: "bestSeller", label: "Best Seller", color: "bg-red-500" },
+    { key: "official", label: "Official", color: "bg-blue-500" },
+    { key: "topDeal", label: "Top Deal", color: "bg-green-500" },
+    { key: "popular", label: "Popular", color: "bg-yellow-500" },
   ];
   const isAllSelected = selectedClassify && quantity > 0;
   const buttonClass = isAllSelected
@@ -204,15 +202,15 @@ export default function ProductDetail() {
             </div>
           </div>
           <div className="w-2/5">
-            <div className="grid grid-cols-4 gap-x-2 text-white text-[10px]">
+            <div className="grid grid-cols-4 gap-x-1 text-white text-[10px]">
               {states.map((state) =>
-                currentProduct?.[state.key] ? (
+                currentProduct?.[state?.key] ? (
                   <div
-                    key={state.key}
-                    className="flex items-center bg-[rgb(var(--quaternary-rgb))] px-4 py-1 rounded-md gap-1"
+                    key={state?.key}
+                    className={`flex items-center justify-center ${state.color} px-4 py-1 rounded-md gap-1`}
                   >
                     <CheckIcon style={{ width: "12px" }} />
-                    <h1>{state.label}</h1>
+                    <h1>{state?.label}</h1>
                   </div>
                 ) : null
               )}
@@ -240,14 +238,18 @@ export default function ProductDetail() {
                 />
                 <MessageIcon className="text-[#787A80]" />
                 <h1 className="text-[#787A80]">
-                  {currentProduct?.rate} reviews
+                  {currentProduct?.rate} review
+                  {currentProduct?.rate > 1 ? "s" : ""}
                 </h1>
                 <FiberManualRecordIcon
                   className=" text-[#DBDBDB]"
                   style={{ width: "8px" }}
                 />
                 <ShoppingBasketIcon className="text-[#787A80]" />
-                <h1 className="text-[#787A80]">{currentProduct?.sold} sold</h1>
+                <h1 className="text-[#787A80]">
+                  {currentProduct?.sold} sold
+                  {currentProduct?.sold > 1 ? "s" : ""}
+                </h1>
               </div>
             </div>
             <div className="flex w-full pt-2 items-center gap-x-2">
@@ -350,7 +352,24 @@ export default function ProductDetail() {
                       {currentProduct?.shop?.name}
                     </h1>
                     <h1>
-                      <Rating value={currentProduct?.shop?.rate} />
+                      {Array.from(
+                        { length: Math.floor(currentProduct?.shop?.rate) },
+                        (_, index) => (
+                          <StarIcon key={index} className="text-[#FF9017]" />
+                        )
+                      )}
+                      {currentProduct?.shop?.rate % 1 !== 0 && (
+                        <StarHalfIcon className="text-[#FF9017]" />
+                      )}
+                      {Array.from(
+                        { length: 5 - Math.ceil(currentProduct?.shop?.rate) },
+                        (_, index) => (
+                          <StarIcon
+                            key={`empty-${index}`}
+                            className="text-[#D4CDC5]"
+                          />
+                        )
+                      )}
                     </h1>
                   </div>
                 </div>
@@ -470,29 +489,35 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="w-1/4 border rounded-md border-[#E0E0E0] p-4">
-            <h1 className="font-semibold text-[18px] mb-4">You may like</h1>
-            {products.slice(0, 4)?.map((item: any, index: any) => {
-              return (
-                <div key={index} className="flex gap-x-2 mb-4">
-                  <img
-                    className="border rounded-md"
-                    src={item?.thumbnail[0]?.link}
-                    alt="img"
-                    style={{ width: "30%" }}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <h1 className="text-gray-700 text-[14px] font-semibold">
-                      {item?.name}
-                    </h1>
-                    <h1 className="text-gray-500">{item?.minPrice === item?.maxPrice
-                  ? `$${item?.minPrice}`
-                  : `$${item?.minPrice} - $${item?.maxPrice}`}</h1>
-                    <h1 className="text-gray-500">{item?.sold} sold</h1>
+          <div className="w-1/4 ">
+            <div className="border rounded-md border-[#E0E0E0] p-4">
+              <h1 className="font-semibold text-[18px] mb-4">You may like</h1>
+              {products.slice(0, 4)?.map((item: any, index: any) => {
+                return (
+                  <div key={index} className="flex gap-x-2 mb-4">
+                    <img
+                      className="border rounded-md"
+                      src={item?.thumbnail[0]?.link}
+                      alt="img"
+                      style={{ width: "30%" }}
+                    />
+                    <div className="flex flex-col gap-1">
+                      <h1 className="text-gray-700 text-[14px] font-semibold">
+                        {item?.name}
+                      </h1>
+                      <h1 className="text-gray-500">
+                        {item?.minPrice === item?.maxPrice
+                          ? `$${item?.minPrice}`
+                          : `$${item?.minPrice} - $${item?.maxPrice}`}
+                      </h1>
+                      <h1 className="text-gray-500">
+                        {item?.sold} sold{item?.sold > 1 ? "s" : ""}
+                      </h1>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
         <div className="w-full my-8">
