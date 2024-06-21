@@ -18,6 +18,8 @@ import StarIcon from "@mui/icons-material/Star";
 import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
+import Rating from "@mui/material/Rating";
 import { Divider } from "@mui/material";
 import Cookie from "js-cookie";
 import Link from "next/link";
@@ -38,6 +40,18 @@ export default function ProductDetail() {
   const [variantId, setVariantId] = useState(null);
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState("");
+  const trueDay = (item: any) => {
+    const date = new Date(item);
+    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    const formattedDate = utcDate.toLocaleDateString("en-GB");
+    return formattedDate;
+  };
+  const states = [
+    { key: "bestSeller", label: "Best Seller" },
+    { key: "official", label: "Official" },
+    { key: "topDeal", label: "Top Deal" },
+    { key: "popular", label: "Popular" },
+  ];
   const isAllSelected = selectedClassify && quantity > 0;
   const buttonClass = isAllSelected
     ? "border px-2 py-2 bg-[rgb(var(--quaternary-rgb))] rounded-md w-full cursor-pointer text-white"
@@ -46,6 +60,8 @@ export default function ProductDetail() {
   const handleSelectClassify = (classtify: any) => {
     setSelectedClassify(classtify);
     setVariantId(classtify?.id);
+    console.log(selectedClassify);
+    setPrice(classtify?.price);
   };
 
   const handleQuantityChange = (event: any) => {
@@ -92,6 +108,7 @@ export default function ProductDetail() {
       alert("Add to cart failed");
     }
   };
+  const [price, setPrice] = useState(0);
 
   React.useEffect(() => {
     const fetch = async () => {
@@ -107,7 +124,6 @@ export default function ProductDetail() {
         setSelectedImage(currentProduct?.thumbnail[0]?.link);
       }
       console.log(proDetail?.data);
-      
     };
     fetch();
   }, [currentProduct?.thumbnail[0]?.link]);
@@ -115,13 +131,11 @@ export default function ProductDetail() {
   useEffect(() => {
     if (selectedClassify) {
       setVariantId(selectedClassify?.id);
-        setDataAddToCart((prevData) => ({
-          ...prevData,
-          variant_id: selectedClassify?.id,
-        }));
+      setDataAddToCart((prevData) => ({
+        ...prevData,
+        variant_id: selectedClassify?.id,
+      }));
     }
-    console.log(variantId);
-    
   }, [selectedClassify, variantId]);
 
   const [dataAddToCart, setDataAddToCart] = useState({
@@ -188,11 +202,18 @@ export default function ProductDetail() {
             </div>
           </div>
           <div className="w-2/5">
-            <div className="flex gap-x-2 text-white">
-              <div className="flex bg-[rgb(var(--quaternary-rgb))] px-4 py-1 rounded-md gap-1">
-                <CheckIcon />
-                <h1>Official</h1>
-              </div>
+            <div className="grid grid-cols-4 gap-x-2 text-white text-[10px]">
+              {states.map((state) =>
+                currentProduct?.[state.key] ? (
+                  <div
+                    key={state.key}
+                    className="flex items-center bg-[rgb(var(--quaternary-rgb))] px-4 py-1 rounded-md gap-1"
+                  >
+                    <CheckIcon style={{ width: "12px" }} />
+                    <h1>{state.label}</h1>
+                  </div>
+                ) : null
+              )}
             </div>
             <div className="flex gap-x-2 items-center">
               <h1 className="font-semibold text-[20px] my-2">
@@ -227,6 +248,14 @@ export default function ProductDetail() {
                 <h1 className="text-[#787A80]">{currentProduct?.sold} sold</h1>
               </div>
             </div>
+            <div className="flex w-full pt-2 items-center gap-x-2">
+              <h1 className="text-gray-700 font-medium">Price:</h1>
+              <h1 className=" font-semibold text-[14px]">
+                {currentProduct?.minPrice === currentProduct?.maxPrice
+                  ? `$${currentProduct?.minPrice}`
+                  : `$${currentProduct?.minPrice} - $${currentProduct?.maxPrice}`}
+              </h1>
+            </div>
             <Divider className="pt-2" />
             <div className="flex w-full pt-2">
               <h1 className="text-gray-700 font-medium w-1/3">Description:</h1>
@@ -234,6 +263,7 @@ export default function ProductDetail() {
                 {currentProduct?.description}
               </h1>
             </div>
+
             <Divider className="pt-2" />
             <div className="flex pt-2 items-center">
               <h1 className="text-gray-700 font-medium w-1/3 mt-2">
@@ -251,7 +281,7 @@ export default function ProductDetail() {
                       className={`flex w-full ${classifyClass} rounded-md px-3 py-1 items-center cursor-pointer`}
                       onClick={() => handleSelectClassify(item)}
                     >
-                      <h1 className="text-[#606060] w-full">
+                      <h1 className="text-[#606060] w-full text-[12px]">
                         {item?.color?.value} - {item?.size?.value}
                       </h1>
                     </div>
@@ -272,6 +302,12 @@ export default function ProductDetail() {
                   className=" w-full border rounded-md px-2 py-1 outline-none"
                 />
               </div>
+            </div>
+            <div className="flex w-full pt-2">
+              <h1 className="text-gray-700 font-medium w-1/3 pt-2">Total:</h1>
+              <h1 className=" font-semibold border rounded-md px-2 py-1">
+                ${price * quantity}
+              </h1>
             </div>
             <div className="flex items-center justify-center pt-5 ">
               <button
@@ -303,14 +339,16 @@ export default function ProductDetail() {
               >
                 <div className="flex gap-x-2 cursor-pointer">
                   <img
-                    src="https://vcdn.tikicdn.com/ts/seller/8e/25/1b/c8c4bb3dd19235890818a8284cad3658.png"
+                    src={currentProduct?.shop?.thumbnail}
                     alt="img"
                     style={{ width: "50px", height: "50px" }}
                   />
                   <div className="text-[12px] flex flex-col justify-center">
-                    <h1>Supplier</h1>
                     <h1 className="text-[16px] font-semibold">
-                      Minh Tuan Mobile
+                      {currentProduct?.shop?.name}
+                    </h1>
+                    <h1>
+                      <Rating value={currentProduct?.shop?.rate} />
                     </h1>
                   </div>
                 </div>
@@ -319,7 +357,7 @@ export default function ProductDetail() {
               <div className="flex gap-x-4 pt-3 text-[#787A80]">
                 <img
                   src={IMAGE.VN_FLAG}
-                  alt="coduc"
+                  alt="img"
                   style={{ width: "20px", height: "20px" }}
                 />
                 <h1>Can Tho, Vietnam</h1>
@@ -339,7 +377,7 @@ export default function ProductDetail() {
                 Seller’s profile
               </button>
             </div>
-            <div className="flex gap-x-2 justify-center pt-5 cursor-pointer">
+            <div className="flex gap-x-2 py-2 justify-center mt-2 cursor-pointer border rounded-md">
               <FavoriteBorderOutlinedIcon className="text-[rgb(var(--quaternary-rgb))]" />
               <h1 className="text-[rgb(var(--quaternary-rgb))]">
                 {" "}
@@ -351,64 +389,85 @@ export default function ProductDetail() {
       </div>
       <div className="w-3/4  flex flex-col justify-center items-center">
         <div className="w-full flex gap-x-4">
-          <div className="w-3/4 border rounded-md border-[#E0E0E0] p-4 ">
-            <h1 className="font-bold text-[18px]">Review</h1>
-            <Divider className="pt-4" />
-            {[1, 2, 3]?.map((item: any, index: any) => {
-              return (
-                <div className="pt-4">
-                  <div className="flex justify-between">
-                    <div className="flex gap-x-2 mt-2">
-                      <div className="p-2 border rounded-full bg-white">
-                        <img
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ6fJuz8nUzHaTJ-Uyj_1JC89WavzpO_CS-g&usqp=CAU"
-                          alt="img"
-                          style={{ width: "24px", height: "24px" }}
-                        />
-                      </div>
-                      <div>
-                        <h1 className="font-semibold text-[#1C1C1C]">
-                          Nguyen Van A
-                        </h1>
-                        <div className="flex">
-                          {[1, 2, 3, 4]?.map((item: any, index: any) => {
-                            return <StarIcon className="text-[#FF9017]" />;
-                          })}
-                          <StarIcon className="text-[#D4CDC5]" />
-                          <div className="flex gap-x-2 justify-center items-center ml-2">
-                            <FiberManualRecordIcon
-                              className="text-[#DBDBDB]"
-                              style={{ width: "8px" }}
+          <div className="w-3/4">
+            <div className=" border rounded-md border-[#E0E0E0] p-4 ">
+              <h1 className="font-bold text-[18px]">Review</h1>
+              <Divider className="pt-2" />
+              {currentProduct.comments?.length > 0 ? (
+                currentProduct.comments.map((item: any, index: any) => {
+                  return (
+                    <div className="pt-4" key={index}>
+                      <div className="flex justify-between">
+                        <div className="flex gap-x-2 mt-2">
+                          <div className="p-2 border rounded-full bg-white">
+                            <img
+                              src={item?.profile?.avatar}
+                              alt="img"
+                              style={{ width: "24px", height: "24px" }}
                             />
-                            <h1 className="text-xs text-gray-500">
-                              purchased 31/05/2024
+                          </div>
+                          <div>
+                            <h1 className="font-semibold text-[#1C1C1C]">
+                              {item?.profile?.name}
                             </h1>
+                            <div className="flex">
+                              {Array.from(
+                                { length: Math.floor(item?.rate) },
+                                (_, index) => (
+                                  <StarIcon
+                                    key={index}
+                                    className="text-[#FF9017]"
+                                  />
+                                )
+                              )}
+                              {item?.rate % 1 !== 0 && (
+                                <StarHalfIcon className="text-[#FF9017]" />
+                              )}
+                              {Array.from(
+                                { length: 5 - Math.ceil(item?.rate) },
+                                (_, index) => (
+                                  <StarIcon
+                                    key={`empty-${index}`}
+                                    className="text-[#D4CDC5]"
+                                  />
+                                )
+                              )}
+                              <div className="flex gap-x-2 justify-center items-center ml-2">
+                                <FiberManualRecordIcon
+                                  className="text-[#DBDBDB]"
+                                  style={{ width: "8px" }}
+                                />
+                                <h1 className="text-xs text-gray-500">
+                                  purchased {trueDay(item?.date)}
+                                </h1>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex mt-2 gap-x-2">
+                          <div className="flex">
+                            <ThumbUpOutlinedIcon className="border-t border-b border-l rounded-l-xs p-2" />
+                            <ThumbDownOutlinedIcon className="border border-r rounded-r-xs p-2" />
+                          </div>
+                          <div>
+                            <MoreVertIcon className="border rounded-xs p-2" />
                           </div>
                         </div>
                       </div>
+                      <h1 className="py-4">{item?.content}</h1>
+                      {currentProduct.comments.length > 1 &&
+                        index < currentProduct.comments.length - 1 && (
+                          <Divider className="pt-2" />
+                        )}
                     </div>
-                    <div className="flex mt-2 gap-x-2">
-                      <div className="flex">
-                        <ThumbUpOutlinedIcon className="border-t border-b border-l rounded-l-xs p-2" />
-                        <ThumbDownOutlinedIcon className="border border-r rounded-r-xs p-2" />
-                      </div>
-                      <div>
-                        <MoreVertIcon className="border rounded-xs p-2" />
-                      </div>
-                    </div>
-                  </div>
-                  <h1 className="py-4">
-                    Mua trên shop chính hãng nhưng lần đâu mua hàng giá trị cao
-                    nên cũng lo lắng.Nhưng nhận hàng về thì okie không có lỗi gì
-                    về vận chuyển, lại mua đc vs giá rẻ hơn các cửa hàng bán
-                    điện thoại.Chưa sử dụng nên k biết có lỗi gì k, đánh giá 5
-                    sao trc cho shop
-                  </h1>
-                  <Divider className="pt-2" />
-                </div>
-              );
-            })}
+                  );
+                })
+              ) : (
+                <div className="text-center py-4">No comment</div>
+              )}
+            </div>
           </div>
+
           <div className="w-1/4 border rounded-md border-[#E0E0E0] p-4">
             <h1 className="font-semibold text-[18px] mb-4">You may like</h1>
             {products.slice(0, 4)?.map((item: any, index: any) => {
