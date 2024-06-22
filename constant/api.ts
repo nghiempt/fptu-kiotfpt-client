@@ -25,4 +25,6 @@ export const API = {
   UPDATE_PROFILE: `${HOST}/profile/update-profile`,
   //
   GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
+  //
+  GET_VOUCHER_BY_SHOP_ID: `${HOST}/voucher/get-by-shop`,
 };

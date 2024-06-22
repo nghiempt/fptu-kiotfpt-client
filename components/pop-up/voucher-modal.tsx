@@ -3,6 +3,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import { VoucherService } from '@/service/voucher';
+import { useState } from 'react';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -15,6 +17,20 @@ const style = {
     p: 4,
     borderRadius: 2,
 };
+
+// const [voucher, setVoucher] = useState([]);
+
+
+//     const getVoucher = async (shopID:any) => {
+//       const v = await VoucherService.getVoucherByShopID((shopID || "")
+//       );
+//       if (v?.result) {
+//         setVoucher(v?.data);
+//       }
+//       console.log(v?.data);
+//     };
+
+
 
 export default function VoucherModal({ open, handleClose }: { open: boolean, handleClose: any }) {
     return (

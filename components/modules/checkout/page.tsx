@@ -14,6 +14,15 @@ export default function Checkout() {
   const [cartData, setCartData] = React.useState([] as any);
   const accountID = Cookie.get("accountID");
   const [address, setAddress] = useState([] as any);
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
+  const [showPanel, setShowPanel] = useState(false);
+
+  const togglePanel = () => setShowPanel(!showPanel);
+
+  const selectAddress = (address: any) => {
+    setSelectedAddress(address);
+    setShowPanel(false);
+  };
 
   const handleOpenVoucherPopup = () => {
     setIsVoucherPopupOpen(true);
@@ -44,7 +53,7 @@ export default function Checkout() {
       if (a?.result) {
         setAddress(a?.data);
       }
-      console.log(address);
+      console.log(a?.data);
     };
     fetch();
   }, []);
@@ -53,7 +62,13 @@ export default function Checkout() {
 
   useEffect(() => {
     setCartData(JSON.parse(cartDataStore || "") || []);
-  }, []);
+    setSelectedAddress(address[0]);
+  }, [address]);
+
+  const productCount = Object.values(groupedData).reduce(
+    (count: number, group: any) => count + group.products.length,
+    0
+  );
 
   return (
     <div className="w-full flex flex-col justify-center items-center pt-4 pb-10 relative">
@@ -72,33 +87,8 @@ export default function Checkout() {
               <h1 className="text-[18px] font-semibold">
                 Choose the Protocol Protocol
               </h1>
-              <div>
-                <div className="">
-                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-300 mt-4 mb-4">
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        name="deliveryOption"
-                        className="form-radio h-5 w-5 text-blue-600"
-                      />
-                      <div className="ml-2">
-                        <span className="text-sm font-semibold ml-1">
-                          Express delivery
-                        </span>
-                        <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
-                          - $15
-                        </span>
-                      </div>
-                      <div className="flex-1 text-right">
-                        <span className="text-xs">
-                          Supports 2 products for this option
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4">
+              
+              <div className="flex flex-col gap-4 mt-4">
                 {Object.values(groupedData).map((group: any, index: any) => (
                   <div key={index}>
                     <div className="bg-white rounded-lg border border-gray-200 box-border">
@@ -131,14 +121,15 @@ export default function Checkout() {
                                 {item?.product?.name}
                               </p>
                               <p className="text-xs text-gray-500">
+                                Price: ${item?.variant?.price}
+                              </p>
+                              <p className="text-xs text-gray-500">
                                 Quantity: {item?.quantity}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Color: {item?.variant?.color?.value}
+                                Classtify: {item?.variant?.color?.value} / {item?.variant?.size?.value}
                               </p>
-                              <p className="text-xs text-gray-500">
-                                Size: {item?.variant?.size?.value}
-                              </p>
+                              
                             </div>
                           </div>
                           <div className="text-right flex flex-col gap-1">
@@ -160,33 +151,68 @@ export default function Checkout() {
               <div>
                 <div className="">
                   <div className="bg-gray-100 p-4 rounded-lg border border-gray-300 mt-4 mb-4">
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        name="deliveryOption"
-                        className="form-radio h-5 w-5 text-blue-600"
-                      />
-                      <div className="ml-2 flex items-center">
-                        <span className="text-sm font-semibold ml-1">
-                          {address?.map((address: any, index: any) => {
-                            return (
-                              <div key={index}>
-                                {address?.address_value},{" "}
-                                {address?.district?.district_value},{" "}
-                                {address?.province?.province_value}
-                              </div>
-                            );
-                          })}
-                        </span>
-                        <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
-                          default
-                        </span>
+                    <div className="relative">
+                      <div className="flex items-center">
+                        <input
+                          type="radio"
+                          name="deliveryOption"
+                          className="form-radio h-5 w-5 text-blue-600"
+                        />
+                        <div className="ml-2 flex items-center">
+                          <span className="text-sm font-semibold ml-1">
+                            <div>
+                              {selectedAddress ? (
+                                <div>
+                                  {selectedAddress.address_value},{" "}
+                                  {selectedAddress.district?.district_value},{" "}
+                                  {selectedAddress.province?.province_value}
+                                </div>
+                              ) : (
+                                "Please select an address"
+                              )}
+                            </div>
+                          </span>
+                          {selectedAddress === address[0] && (
+                            <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
+                              default
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex-1 text-right">
+                          <span
+                            className="text-xs font-bold text-[rgb(var(--quaternary-rgb))] cursor-pointer"
+                            onClick={togglePanel}
+                          >
+                            Change
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex-1 text-right">
-                        <span className="text-xs font-bold text-[rgb(var(--quaternary-rgb))] cursor-pointer">
-                          Change
-                        </span>
-                      </div>
+                      {showPanel && (
+                        <div className="cursor-pointer p-4 rounded-b-lg text-sm font-semibold flex flex-col gap-2"
+                        style={{
+                          position: 'absolute',
+                          top: 32,
+                          left: -15,
+                          backgroundColor: 'white',
+                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                          width: '100%',
+                          zIndex: 1000, 
+                        }}
+                        >
+                          {address.map((address: any, index: any) => (
+                            <div
+                              key={index}
+                              onClick={() => selectAddress(address)}
+                              className=" hover:underline"
+                            >
+                              {address.address_value},{" "}
+                              {address.district?.district_value},{" "}
+                              {address.province?.province_value}
+                              {index === 0 ? " (default)" : ""}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -223,7 +249,7 @@ export default function Checkout() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-[18px] font-bold">Order</h1>
-              <h1 className="text-[16px]">0 products</h1>
+              <h1 className="text-[16px]">{productCount} product{productCount > 1 ? "s" : ""}</h1>
             </div>
             <button
               onClick={handleOpenVoucherPopup}

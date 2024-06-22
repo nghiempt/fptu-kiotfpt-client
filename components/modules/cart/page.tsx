@@ -172,26 +172,23 @@ export default function Card() {
   };
 
   const getSelectedShopInfo = (): { [key: string]: ShopItem } => {
-  const selectedShopInfo: { [key: string]: ShopItem } = {};
-  cart.forEach((section: any, shopIndex: any) => {
-    if (selectedItems.shops[shopIndex]) {
-      selectedShopInfo[shopIndex] = {
-        name: section?.shop?.name,
-        thumbnail: section?.shop?.thumbnail,
-      };
-    }
-  });
-  
-  return selectedShopInfo;
-}
-  
+    const selectedShopInfo: { [key: string]: ShopItem } = {};
+    cart.forEach((section: any, shopIndex: any) => {
+      if (selectedItems.shops[shopIndex]) {
+        selectedShopInfo[shopIndex] = {
+          name: section?.shop?.name,
+          thumbnail: section?.shop?.thumbnail,
+        };
+      }
+    });
+
+    return selectedShopInfo;
+  };
 
   const selectedProducts = getSelectedProductsInfo();
   const selectedShopInfo = getSelectedShopInfo();
 
-  const cartItems = selectedProducts.map((product:any) => {
-
-    
+  const cartItems = selectedProducts.map((product: any) => {
     const shop = selectedShopInfo[product?.shopIndex];
 
     return {
@@ -224,8 +221,11 @@ export default function Card() {
 
   React.useEffect(() => {
     console.log(selectedProducts);
-    const t = selectedProducts.reduce((sum, product) => sum + (product?.total || 0), 0);
-    setTotalProduct(t);  
+    const t = selectedProducts.reduce(
+      (sum, product) => sum + (product?.total || 0),
+      0
+    );
+    setTotalProduct(t);
     localStorage.setItem("dataCart", JSON.stringify(selectedProducts));
   }, [selectedProducts, selectedShopInfo]);
 
@@ -292,12 +292,7 @@ export default function Card() {
                               {item?.product?.name}
                             </div>
                             <div className="font-regular text-gray-500 mb-2">
-                              
-                                <span>
-                                  Price: ${item?.variant?.price}
-                                </span>
-                                
-                              
+                              <span>Price: ${item?.variant?.price}</span>
                             </div>
                             <div className="font-regular text-gray-500 mb-2">
                               <div>
@@ -375,14 +370,12 @@ export default function Card() {
           </div>
         </div>
         <div className="w-1/4">
-          
           <div className="border border-gray-200 rounded-md p-5 mt-4">
             <div className="flex justify-between">
               <div className="pb-1 text-[16px]">Subtotal</div>
               <div className="text-black pb-1 text-[16px] text-left font-semibold"></div>
             </div>
-            
-            
+
             <Divider className="pt-2" />
             <div className="flex justify-between font-bold pt-2">
               <div className="text-[18px]">Total</div>
