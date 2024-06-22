@@ -30,6 +30,7 @@ export const API = {
   GET_ALL_ORDER_BY_ACCOUNT_ID: `${HOST}/order/get-all`,
   GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
   GET_ALL_WISHLIST_BY_ACCOUNT_ID: `${HOST}/favourite/get-all`,
+  DELETE_FAVOURITE_PRODUCT: `${HOST}/favourite/delete`,
   GET_ALL_TRANSACTION_BY_ACCOUNT_ID: `${HOST}/transaction/get-all`,
   GET_ALL_PROVINCE: `${HOST}/address/province/get-all`,
   GET_ALL_DISTRICT_BY_PROVINCE_ID: `${HOST}/address/district/get-all-by-province`,
@@ -37,4 +38,5 @@ export const API = {
   UPDATE_PASSWORD: `${HOST}/profile/update-password`,
   UPDATE_ADDRESS: `${HOST}/address/update`,
   GET_ADDRESS_BY_ID: `${HOST}/address/get`,
+  GET_ALL_COMMENT_BY_ACCOUNT_ID: `${HOST}/comment/get-all`,
 };

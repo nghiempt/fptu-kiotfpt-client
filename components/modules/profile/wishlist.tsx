@@ -22,6 +22,18 @@ export default function Wishlist() {
     fetch();
   }
 
+  const handleDeleteFavouriteProduct = async (id: string) => {
+    const fetch = async () => {
+      const prof = await ProfileService.deleteFavouriteProduct(id);
+      if (prof?.result) {
+        handleGetWishList();
+      } else {
+        console.log(prof.data);
+      }
+    }
+    fetch();
+  }
+
   useEffect(() => {
     handleGetWishList()
   }, []);
@@ -34,7 +46,8 @@ export default function Wishlist() {
       <div className="w-full rounded-md flex grid grid-cols-4 gap-4">
         {products.slice(0, 6)?.map((item: any, index: any) => {
           return (
-            <CardProduct key={index} item={item} index={index} limit={100} />
+            <CardProduct key={index} item={item} index={index} limit={100} isFavouriteProductCart={handleDeleteFavouriteProduct} />
+
           );
         })}
       </div>

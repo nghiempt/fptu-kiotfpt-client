@@ -6,13 +6,15 @@ import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import StarIcon from "@mui/icons-material/Star";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Divider from "@mui/material/Divider";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
 import MoodIcon from "@mui/icons-material/Mood";
+import { ProfileService } from "@/service/profile";
+import Cookie from 'js-cookie';
 
 interface CustomTabPanelProps {
   children: React.ReactNode;
@@ -49,11 +51,30 @@ function a11yProps(index: any) {
 }
 
 export default function Review() {
-  const [value, setValue] = React.useState(0);
+  const accountID = JSON.parse(Cookie.get('accountID') || "0");
+  const [value, setValue] = useState(0);
+  const [reviewedList, setReviewedList] = useState<any>([]);
+  const [needReviewList, setNeedReviewList] = useState<any>([]);
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const prof = await ProfileService.getAllCommentByAccountID(accountID);
+      if (prof?.result) {
+        setReviewedList(prof?.data);
+        console.log(prof?.data);
+      } else {
+        console.log("wrong");
+      }
+    }
+    fetch();
+
+  }, []);
+
+  useEffect(() => { }, [reviewedList, needReviewList]);
 
   return (
     <div className="w-full box-border flex flex-col gap-4 pb-36">
@@ -148,7 +169,7 @@ export default function Review() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <div className="flex flex-col gap-4">
-          {[1, 2, 3]?.map((item: any, index: any) => {
+          {reviewedList?.map((item: any, index: any) => {
             return (
               <div className="w-full bg-gray-50 rounded-lg p-2">
                 <div className="w-full flex gap-x-2 items-start">
@@ -168,8 +189,8 @@ export default function Review() {
                       })}
                     </div>
 
-                    <h1>Good.</h1>
-                    <div className="flex gap-x-4">
+                    <h1>{item?.content}</h1>
+                    {/* <div className="flex gap-x-4">
                       <ThumbUpIcon className="text-gray-400" />
                       <ChatBubbleIcon className="text-gray-400" />
                     </div>
@@ -183,7 +204,7 @@ export default function Review() {
                         />
                         <SendIcon className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 cursor-pointer" />
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
