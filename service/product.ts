@@ -20,7 +20,18 @@ const getProductByID = async (id: string) => {
     }
 };
 
+const getAllBrand = async () => {
+    try {
+        const response = await fetch(API.GET_ALL_BRAND);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProductService = {
     searchProduct,
-    getProductByID
+    getProductByID,
+    getAllBrand
 }

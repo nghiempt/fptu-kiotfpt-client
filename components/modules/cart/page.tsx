@@ -305,42 +305,40 @@ export default function Card() {
                                 </span>
                               </div>
                             </div>
-
-                            <div className="flex gap-x-2">
-                              <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white">
-                                <DeleteIcon />
-                              </div>
-                              <div className="bg-[rgb(var(--quaternary-rgb))] p-1 rounded-md text-white">
-                                <BookmarkIcon />
+                          </div>
+                        </div>
+                        <div className="my-5 flex gap-x-4 items-center">
+                          <div>
+                            <div className="mb-2 text-center text-xl font-semibold border rounded-md py-2">
+                              ${item?.total}
+                            </div>
+                            <div className="flex">
+                              <div className="flex justify-end gap-x-1">
+                                <button
+                                  type="submit"
+                                  className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
+                                  style={{ color: "gray" }}
+                                >
+                                  -
+                                </button>
+                                <input
+                                  type="text"
+                                  className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sm bg-[rgb(var(--quaternary-rgb))]"
+                                  value={item?.quantity}
+                                />
+                                <button
+                                  type="submit"
+                                  className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
+                                  style={{ color: "gray" }}
+                                >
+                                  +
+                                </button>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="my-5">
-                          <div className="mb-2 text-right text-xl font-semibold">
-                            ${item?.total}
-                          </div>
-                          <div className="flex">
-                            <div className="flex justify-end gap-x-1">
-                              <button
-                                type="submit"
-                                className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
-                                style={{ color: "gray" }}
-                              >
-                                -
-                              </button>
-                              <input
-                                type="text"
-                                className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sx bg-[rgb(var(--quaternary-rgb))]"
-                                value={item?.quantity}
-                              />
-                              <button
-                                type="submit"
-                                className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
-                                style={{ color: "gray" }}
-                              >
-                                +
-                              </button>
+                          <div>
+                            <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white">
+                              <DeleteIcon className="cursor-pointer"/>
                             </div>
                           </div>
                         </div>

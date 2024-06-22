@@ -27,4 +27,6 @@ export const API = {
   GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
   //
   GET_VOUCHER_BY_SHOP_ID: `${HOST}/voucher/get-by-shop`,
+  //
+  GET_ALL_BRAND: `${HOST}/brand/get-all`,
 };
