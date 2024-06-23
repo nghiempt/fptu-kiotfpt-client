@@ -32,4 +32,6 @@ export const API = {
   //
   GET_ALL_BRAND: `${HOST}/brand/get-all`,
   GET_ALL_PRODUCTS: `${HOST}/product/get-all`,
+  //
+  CHECKOUT: `${HOST}/order/checkout`,
 };

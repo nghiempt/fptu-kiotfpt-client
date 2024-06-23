@@ -15,11 +15,10 @@ import MessageIcon from "@mui/icons-material/Message";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import StarIcon from "@mui/icons-material/Star";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
 import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import StarHalfIcon from "@mui/icons-material/StarHalf";
-import Rating from "@mui/material/Rating";
 import { Divider } from "@mui/material";
 import Cookie from "js-cookie";
 import Link from "next/link";
@@ -60,7 +59,6 @@ export default function ProductDetail() {
   const handleSelectClassify = (classtify: any) => {
     setSelectedClassify(classtify);
     setVariantId(classtify?.id);
-    console.log(selectedClassify);
     setPrice(classtify?.price);
   };
 
@@ -123,7 +121,6 @@ export default function ProductDetail() {
         setCurrentProduct(proDetail?.data);
         setSelectedImage(currentProduct?.thumbnail[0]?.link);
       }
-      console.log(proDetail?.data);
     };
     fetch();
   }, [currentProduct?.thumbnail[0]?.link]);

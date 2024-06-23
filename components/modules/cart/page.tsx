@@ -84,7 +84,6 @@ export default function Card() {
       const c = await CartService.getCartByID(JSON.parse(accountID || ""));
       if (c?.result) {
         setCart(c?.data);
-        console.log(c?.data);
       }
     };
     fetch();
@@ -92,20 +91,20 @@ export default function Card() {
 
   const UpdateAmount = async (id: any, amount: any) => {
     const upP = await CartService.updateAmountProduct(id, amount);
-      if (upP) {
-        window.location.reload();
-      } else {
-        alert("Update fail");
-      }
-  }
+    if (upP) {
+      window.location.reload();
+    } else {
+      alert("Update fail");
+    }
+  };
 
-  const handleOpenDel = (id:any) => {
+  const handleOpenDel = (id: any) => {
     setOpenDel(true);
     setIdDel(id);
-  }
+  };
   const handleCloseDel = () => {
     setOpenDel(false);
-  }
+  };
   const handleSelectAll = () => {
     const newSelectedItems = { ...selectedItems };
     newSelectedItems.all = !selectedItems.all;
@@ -239,7 +238,6 @@ export default function Card() {
   });
 
   React.useEffect(() => {
-    console.log(selectedProducts);
     const t = selectedProducts.reduce(
       (sum, product) => sum + (product?.total || 0),
       0
@@ -249,9 +247,8 @@ export default function Card() {
   }, [selectedProducts, selectedShopInfo]);
 
   return (
-    
     <div className="w-full pt-4 flex flex-col justify-center items-center">
-      <DelModal open={openDel} handleClose={handleCloseDel} id={idDel}/>
+      <DelModal open={openDel} handleClose={handleCloseDel} id={idDel} />
       <CategoryMenu />
       <div className="w-3/4 flex justify-start font-black text-2xl text-gray-700">
         My Cart
@@ -339,7 +336,9 @@ export default function Card() {
                                   type="submit"
                                   className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
                                   style={{ color: "gray" }}
-                                  onClick={() => UpdateAmount(item?.id, item?.quantity - 1)}
+                                  onClick={() =>
+                                    UpdateAmount(item?.id, item?.quantity - 1)
+                                  }
                                 >
                                   -
                                 </button>
@@ -352,7 +351,9 @@ export default function Card() {
                                   type="submit"
                                   className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
                                   style={{ color: "gray" }}
-                                  onClick={() => UpdateAmount(item?.id, item?.quantity + 1)}
+                                  onClick={() =>
+                                    UpdateAmount(item?.id, item?.quantity + 1)
+                                  }
                                 >
                                   +
                                 </button>
@@ -360,8 +361,11 @@ export default function Card() {
                             </div>
                           </div>
                           <div>
-                            <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white " onClick={() => handleOpenDel(item?.id)}>
-                              <DeleteIcon className="cursor-pointer"/>
+                            <div
+                              className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white "
+                              onClick={() => handleOpenDel(item?.id)}
+                            >
+                              <DeleteIcon className="cursor-pointer" />
                             </div>
                           </div>
                         </div>
