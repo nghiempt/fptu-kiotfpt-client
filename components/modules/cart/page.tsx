@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Divider } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
@@ -71,6 +71,7 @@ export default function Card() {
   const [openDel, setOpenDel] = React.useState(false);
   const [idDel, setIdDel] = React.useState("" as any);
   const [cart, setCart] = React.useState([] as any);
+
   const [totalProduct, setTotalProduct] = React.useState(0);
   const [selectedItems, setSelectedItems] = React.useState<any>({
     all: false,
@@ -83,12 +84,20 @@ export default function Card() {
       const c = await CartService.getCartByID(JSON.parse(accountID || ""));
       if (c?.result) {
         setCart(c?.data);
+        console.log(c?.data);
       }
-      
-      console.log(c?.data);
     };
     fetch();
   }, []);
+
+  const UpdateAmount = async (id: any, amount: any) => {
+    const upP = await CartService.updateAmountProduct(id, amount);
+      if (upP) {
+        window.location.reload();
+      } else {
+        alert("Update fail");
+      }
+  }
 
   const handleOpenDel = (id:any) => {
     setOpenDel(true);
@@ -280,7 +289,7 @@ export default function Card() {
                         key={itemIndex}
                         className="w-full flex justify-between pl-5 box-border"
                       >
-                        <div className="flex justify-center items-center gap-x-5">
+                        <div className="flex justify-center items-center gap-x-5 mt-4">
                           <input
                             type="checkbox"
                             checked={
@@ -330,6 +339,7 @@ export default function Card() {
                                   type="submit"
                                   className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
                                   style={{ color: "gray" }}
+                                  onClick={() => UpdateAmount(item?.id, item?.quantity - 1)}
                                 >
                                   -
                                 </button>
@@ -342,6 +352,7 @@ export default function Card() {
                                   type="submit"
                                   className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
                                   style={{ color: "gray" }}
+                                  onClick={() => UpdateAmount(item?.id, item?.quantity + 1)}
                                 >
                                   +
                                 </button>

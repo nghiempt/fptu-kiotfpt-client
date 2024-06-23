@@ -41,8 +41,19 @@ const deleteProductInCart = async (id: string) => {
     }
 }
 
+const updateAmountProduct = async (itemId: any, newAmount: any) => {
+  try {
+    const response = await fetch(API.UPDATE_AMOUNT_PRODUCT + `?itemId=${itemId}&newAmount=${newAmount}`);
+    const data = await response.json();
+    return data
+} catch (err) {
+    return false;
+}
+}
+
 export const CartService = {
     addToCart,
     getCartByID,
     deleteProductInCart,
+    updateAmountProduct,
 }
