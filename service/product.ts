@@ -20,6 +20,16 @@ const getProductByID = async (id: string) => {
     }
 };
 
+const getAllProducts = async (page: string, amount: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_PRODUCTS + `?page=${page}&amount=${amount}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+}
+
 const getAllBrand = async () => {
     try {
         const response = await fetch(API.GET_ALL_BRAND);
@@ -33,5 +43,6 @@ const getAllBrand = async () => {
 export const ProductService = {
     searchProduct,
     getProductByID,
-    getAllBrand
+    getAllBrand,
+    getAllProducts
 }

@@ -1,25 +1,18 @@
 "use client";
 
-import { Divider, Pagination } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import Box from "@mui/material/Box";
-import Slider from "@mui/material/Slider";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import StarIcon from "@mui/icons-material/Star";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import CloseIcon from "@mui/icons-material/Close";
 import CardProduct from "@/components/common/card-product";
 import CategoryMenu from "@/components/common/category-menu";
-import { ProductService } from "@/service/product";
 import { HomeService } from "@/service/home";
+import { ProductService } from "@/service/product";
+import { Divider, Pagination } from "@mui/material";
+import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Slider from "@mui/material/Slider";
+import StarIcon from "@mui/icons-material/Star";
+import { useEffect, useState } from "react";
 
 function valuetext(value: any) {
   return `${value}°C`;
@@ -40,7 +33,13 @@ interface Product {
   official: boolean;
   brand: { id: number; name: string; thumbnail: string };
   category: { id: number; name: string; thumbnail: string; status: any };
-  shop: { id: number; name: string; email: string; phone: string; thumbnail: string };
+  shop: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    thumbnail: string;
+  };
   [key: string]: any;
 }
 
@@ -52,15 +51,19 @@ export default function Product() {
   const [value, setValue] = useState([20, 37]);
   const [category, setCategory] = useState<any[]>([]);
   const [brand, setBrand] = useState<BrandItem[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
+  const [priceRange, setPriceRange] = useState([0, 999999]);
+  const [selectedConditions, setSelectedConditions] = useState<number[]>([]);
+  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [visibleCategories, setVisibleCategories] = useState(4);
   const [features, setFeatures] = useState("");
   const [showAllBrand, setShowAllBrand] = useState(false);
   const [visibleBrand, setVisibleBrand] = useState(4);
-  const [checkedState, setCheckedState] = useState<CheckedState>({});
-  const [products, setProducts] = useState<Product[]>([]); // Use Product type
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Use Product type
-  const [sort, setSort] = useState(""); // Add state for sorting
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [sort, setSort] = useState(""); 
 
   const valueSort = [
     { value: "popular", label: "Popular" },
@@ -69,26 +72,16 @@ export default function Product() {
     { value: "official", label: "Official" },
   ];
 
-  useEffect(() => {
-    setCheckedState(
-      brand.reduce((acc, brandItem) => ({ ...acc, [brandItem.id]: false }), {})
-    );
-  }, [brand]);
-
-  const handleOnChangeBrand = (id: any) => {
-    setCheckedState((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
-    }));
-  };
 
   useEffect(() => {
     const fetch = async () => {
-      const pros = await ProductService.searchProduct("", "1", "16");
+      const pros = await ProductService.getAllProducts("1", "200");
       if (pros?.result) {
         const sortedProducts = sortProducts(pros.data, sort);
+        console.log(pros.data);
         setProducts(sortedProducts);
-        setFilteredProducts(sortedProducts); // Set initial filtered products to all products
+        setFilteredProducts(sortedProducts);
+        filterProducts();
       }
       const b = await ProductService.getAllBrand();
       if (b?.result) {
@@ -102,9 +95,7 @@ export default function Product() {
     fetch();
   }, [sort]);
 
-  useEffect(() => {
-    filterProducts();
-  }, [ value, features]);
+  useEffect(() => {}, [value]);
 
   const sortProducts = (products: Product[], sortValue: string): Product[] => {
     switch (sortValue) {
@@ -120,33 +111,90 @@ export default function Product() {
         return products;
     }
   };
-
   const filterProducts = () => {
-    let updatedProducts = [...products];
+    let filtered = products;
+
+    // Filter by category
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((product) =>
+        selectedCategories.includes(product?.category?.id)
+      );
+    }
 
     // Filter by brand
-    const selectedBrands = brand
-      .filter((b) => checkedState[b.id])
-      .map((b) => b.brand_name);
     if (selectedBrands.length > 0) {
-      updatedProducts = updatedProducts.filter((product) =>
-        selectedBrands.includes(product.brand.name)
+      filtered = filtered.filter((product) =>
+        selectedBrands.includes(product?.brand?.id)
       );
     }
 
     // Filter by price range
-    updatedProducts = updatedProducts.filter(
-      (product) => product.price >= value[0] && product.price <= value[1]
+    filtered = filtered.filter(
+      (product) =>
+        product?.price >= priceRange[0] && product?.price <= priceRange[1]
     );
 
-    // Filter by features
-    if (features) {
-      updatedProducts = updatedProducts.filter(
-        (product) => product.type === features
+    // Filter by condition
+    if (selectedConditions.length > 0) {
+      filtered = filtered.filter((product) =>
+        selectedConditions.includes(product?.condition?.id)
       );
     }
 
-    setFilteredProducts(updatedProducts);
+    // Filter by rating
+    if (selectedRatings.length > 0) {
+      filtered = filtered.filter((product) =>
+        selectedRatings.includes(product?.rate)
+      );
+    }
+
+    setFilteredProducts(filtered);
+  };
+  useEffect(() => {
+ 
+  }, [
+    selectedCategories,
+    selectedBrands,
+    priceRange,
+    selectedConditions,
+    selectedRatings,
+    sort,
+    products,
+  ]);
+
+  const handleCategoryChange = (id: number) => {
+    setSelectedCategories((prev) =>
+      prev.includes(id)
+        ? prev.filter((category) => category !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleBrandChange = (id: number) => {
+    setSelectedBrands((prev) =>
+      prev.includes(id) ? prev.filter((brand) => brand !== id) : [...prev, id]
+    );
+  };
+
+  const handlePriceRangeChange = (event: any) => {
+    const { min, max } = event.target;
+    setPriceRange([min, max]);
+  };
+
+  const handleConditionChange = (id: number) => {
+    setSelectedConditions((prev) =>
+      prev.includes(id)
+        ? prev.filter((condition) => condition !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleRatingChange = (rating: number) => {
+    setSelectedRatings((prev) =>
+      prev.includes(rating)
+        ? prev.filter((r) => r !== rating)
+        : [...prev, rating]
+    );
   };
 
   const handleChangeFeatures = (event: any) => {
@@ -182,7 +230,12 @@ export default function Product() {
               {category?.map((item, index) => {
                 if (index < visibleCategories) {
                   return (
-                    <div key={index}>
+                    <div key={index} className="flex gap-x-2">
+                      <input
+                        type="checkbox"
+                        onChange={() => handleCategoryChange(item?.id)}
+                        checked={selectedCategories.includes(item.id)}
+                      />
                       <h1>{item?.name}</h1>
                     </div>
                   );
@@ -206,13 +259,12 @@ export default function Product() {
                     <div key={item?.id} className="flex gap-x-2">
                       <input
                         type="checkbox"
-                        id={`checkbox-${item?.id}`}
-                        checked={checkedState[item?.id]}
-                        onChange={() => handleOnChangeBrand(item?.id)}
+                        onChange={() => handleBrandChange(item?.id)}
+                        checked={selectedBrands.includes(item?.id)}
                       />
-                      <label htmlFor={`checkbox-${item?.id}`}>
+                      <h1>
                         {item?.brand_name}
-                      </label>
+                      </h1>
                     </div>
                   );
                 }
@@ -230,19 +282,90 @@ export default function Product() {
                 Price range
               </h1>
             </div>
-            <Box>
-              <Slider
-                getAriaLabel={() => "Price range"}
-                value={value}
-                onChange={handleChange}
-                valueLabelDisplay="auto"
-                getAriaValueText={valuetext}
-                min={0}
-                max={1000}
+          </div>
+          <div className="w-full flex gap-x-4">
+            <div className="w-1/2">
+              <h1>Min</h1>
+              <input
+                className="w-full p-1 outline-none border-gray-300 border rounded-md box-border"
+                type="text"
+                placeholder="0"
               />
-            </Box>
+            </div>
+            <div className="w-1/2">
+              <h1>Max</h1>
+              <input
+                className="w-full p-1 outline-none border-gray-300 border rounded-md box-border"
+                type="text"
+                placeholder="999999"
+              />
+            </div>
+          </div>
+          <button className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white font-semibold border rounded-[6px] hover:text-[#0015ff] ">
+            Apply
+          </button>
+          <Divider className="pt-2" />
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <h1 className="font-semibold pb-2 pt-2 text-[16px]">Condition</h1>
+            </div>
+            <div className="flex flex-col flex-col-4 gap-2">
+              {[
+                {
+                  id: 1,
+                  name: "New",
+                },
+                {
+                  id: 2,
+                  name: "Used",
+                },
+                {
+                  id: 3,
+                  name: "Refurbished",
+                },
+              ]?.map((item: any, index: any) => {
+                return (
+                  <div key={index} className="flex gap-x-2">
+                    <input
+                      type="checkbox"
+                      onChange={() => handleConditionChange(item.id)}
+                      checked={selectedConditions.includes(item.id)}
+                    />
+                    <h1>{item.name}</h1>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <Divider className="pt-2" />
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <h1 className="font-semibold pb-2 pt-2 text-[16px]">Rating</h1>
+            </div>
+            <div className="flex flex-col gap-2">
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <div className="flex gap-x-2" key={rating}>
+                  <input
+                    type="checkbox"
+                    onChange={() => handleRatingChange(rating)}
+                    checked={selectedRatings.includes(rating)}
+                  />
+                  <div className="flex">
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <StarIcon
+                        key={index}
+                        className={
+                          index < rating ? "text-[#FF9017]" : "text-[#D4CDC5]"
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
         <div className="w-3/4">
           <div className="w-full flex box-border border border-[#E0E0E0] rounded-[6px] my-2 px-2 py-2 items-center gap-x-2">
             <div className="flex w-1/2 pl-2 text-[16px]">
@@ -271,12 +394,40 @@ export default function Product() {
               </div>
             </div>
           </div>
+          <div className="flex gap-x-4 items-center">
+            <div className="flex gap-x-2 py-2">
+              {[1]?.map((item: any, index: any) => {
+                return (
+                  <div key={index}>
+                    <div className="flex gap-x-2 border-2 border-[rgb(var(--quaternary-rgb))] rounded-md p-1 pl-2">
+                      <h1>Samsung</h1>
+                      {/* <CloseIcon className="cursor-pointer" /> */}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <h1 className="text-[rgb(var(--quaternary-rgb))] cursor-pointer font-medium text-[14px]">
+              Clear all fillter
+            </h1>
+          </div>
           <div className="w-full mt-2">
             <div className="w-full grid grid-cols-4 gap-4">
-              {filteredProducts?.map((item: Product, index: number) => (
-                <CardProduct key={index} item={item} index={index} limit={20} />
-              ))}
+              {products?.map((item: any, index: any) => {
+                return (
+                  <CardProduct
+                    key={index}
+                    item={item}
+                    index={index}
+                    limit={20}
+                  />
+                );
+              })}
             </div>
+          </div>
+
+          <div className="w-3/4 flex justify-end gap-x-2 mt-8">
+            <Pagination count={10} variant="outlined" shape="rounded" />
           </div>
         </div>
       </div>

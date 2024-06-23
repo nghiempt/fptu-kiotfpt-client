@@ -29,4 +29,5 @@ export const API = {
   GET_VOUCHER_BY_SHOP_ID: `${HOST}/voucher/get-by-shop`,
   //
   GET_ALL_BRAND: `${HOST}/brand/get-all`,
+  GET_ALL_PRODUCTS: `${HOST}/product/get-all`,
 };
