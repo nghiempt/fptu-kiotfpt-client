@@ -82,7 +82,7 @@ export default function Shop() {
     const fetch = async () => {
       const pros = await ShopService.getProductByShopID(searchParams.get('id') || "", "1", "15");
       if (pros?.result) {
-        setProducts(pros?.data);
+        setProducts(pros?.data?.products);
       }
 
       const s = await ShopService.getShopByID(searchParams.get('id') || "");
@@ -119,7 +119,7 @@ export default function Shop() {
             </div>
           </div>
           <Divider orientation="vertical" flexItem className="bg-blue-200" />
-          <button className="border border-2 font-semibold border-[rgb(var(--quaternary-rgb))] rounded-md py-2 px-8 text-[rgb(var(--quaternary-rgb))]">+ Follow</button>
+          <button className=" border-2 font-semibold border-[rgb(var(--quaternary-rgb))] rounded-md py-2 px-8 text-[rgb(var(--quaternary-rgb))]">+ Follow</button>
         </div>
         <div className="w-full flex items-center mt-4">
           <div className="w-3/4">
@@ -199,7 +199,7 @@ export default function Shop() {
                           Change
                         </h1>
                       </div>
-                      <div className="w-full flex grid grid-cols-4 gap-2">
+                      <div className="w-full grid grid-cols-4 gap-2">
                         {products.slice(0, 12)?.map((item: any, index: any) => {
                           return (
                             <CardProduct key={index} item={item} index={index} limit={100} />

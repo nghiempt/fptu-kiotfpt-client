@@ -13,6 +13,7 @@ export const API = {
   //
   ADD_TO_CART: `${HOST}/add-to-cart`,
   GET_CART_BY_ACCOUNT_ID: `${HOST}/cart`,
+  DELETE_PRODUCT_IN_CART: `${HOST}/item/delete`,
   //
   SEARCH_PRODUCT: `${HOST}/product/search`,
   //

@@ -114,7 +114,7 @@ export default function ProductDetail() {
     const fetch = async () => {
       const pros = await ProductService.searchProduct("", "1", "10");
       if (pros?.result) {
-        setProducts(pros?.data);
+        setProducts(pros?.data?.products);
       }
       const proDetail = await ProductService.getProductByID(
         searchParams.get("id") || "0"
@@ -492,7 +492,7 @@ export default function ProductDetail() {
           <div className="w-1/4 ">
             <div className="border rounded-md border-[#E0E0E0] p-4">
               <h1 className="font-semibold text-[18px] mb-4">You may like</h1>
-              {products.slice(0, 4)?.map((item: any, index: any) => {
+              {products?.slice(0, 4)?.map((item: any, index: any) => {
                 return (
                   <div key={index} className="flex gap-x-2 mb-4">
                     <img

@@ -20,6 +20,7 @@ import CardProduct from "@/components/common/card-product";
 import CategoryMenu from "@/components/common/category-menu";
 import Cookie from "js-cookie";
 import { CartService } from "@/service/cart";
+import DelModal from "@/components/pop-up/del-cart-product";
 
 type SelectedItems = {
   all: boolean;
@@ -67,7 +68,8 @@ type ShopItem = {
 
 export default function Card() {
   const accountID = Cookie.get("accountID");
-
+  const [openDel, setOpenDel] = React.useState(false);
+  const [idDel, setIdDel] = React.useState("" as any);
   const [cart, setCart] = React.useState([] as any);
   const [totalProduct, setTotalProduct] = React.useState(0);
   const [selectedItems, setSelectedItems] = React.useState<any>({
@@ -82,11 +84,19 @@ export default function Card() {
       if (c?.result) {
         setCart(c?.data);
       }
+      
       console.log(c?.data);
     };
     fetch();
   }, []);
 
+  const handleOpenDel = (id:any) => {
+    setOpenDel(true);
+    setIdDel(id);
+  }
+  const handleCloseDel = () => {
+    setOpenDel(false);
+  }
   const handleSelectAll = () => {
     const newSelectedItems = { ...selectedItems };
     newSelectedItems.all = !selectedItems.all;
@@ -230,7 +240,9 @@ export default function Card() {
   }, [selectedProducts, selectedShopInfo]);
 
   return (
+    
     <div className="w-full pt-4 flex flex-col justify-center items-center">
+      <DelModal open={openDel} handleClose={handleCloseDel} id={idDel}/>
       <CategoryMenu />
       <div className="w-3/4 flex justify-start font-black text-2xl text-gray-700">
         My Cart
@@ -337,7 +349,7 @@ export default function Card() {
                             </div>
                           </div>
                           <div>
-                            <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white">
+                            <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white " onClick={() => handleOpenDel(item?.id)}>
                               <DeleteIcon className="cursor-pointer"/>
                             </div>
                           </div>

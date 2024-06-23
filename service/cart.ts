@@ -29,7 +29,20 @@ const getCartByID = async (cartID: string) => {
     }
 };
 
+const deleteProductInCart = async (id: string) => {
+    try {
+        const response = await fetch(API.DELETE_PRODUCT_IN_CART + `/${id}`, {
+            method: "DELETE",
+        });
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+}
+
 export const CartService = {
     addToCart,
     getCartByID,
+    deleteProductInCart,
 }

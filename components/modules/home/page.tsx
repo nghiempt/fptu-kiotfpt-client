@@ -79,7 +79,7 @@ export default function Home() {
         setProductTopDeal(productTD?.data);
       }
 
-      const pros = await ProductService.searchProduct("", "1", "16");
+      const pros = await ProductService.getAllProducts("1", "16");
       if (pros?.result) {
         setProducts(pros?.data);
       }
@@ -245,7 +245,7 @@ export default function Home() {
           </div>
         </div>
         <div className="w-4/5 grid grid-cols-5">
-          {productTopDeal.slice(0, 5)?.map((item: any, index: any) => {
+          {products.slice(0, 5)?.map((item: any, index: any) => {
             return (
               <Link
                 href={{
@@ -337,7 +337,7 @@ export default function Home() {
               </div>
               <div className="w-4/5 flex flex-col justify-center items-center">
                 <div className="w-full grid grid-cols-4">
-                  {products.slice(0, 4)?.map((item: any, index: any) => {
+                  {products?.slice(0, 4).map((item: any, index: any) => {
                     return (
                       <div key={index} className="border-l border-[#E0E0E0] p-2">
                         <div className="text-[#1C1C1C] text-[16px] p-2">
