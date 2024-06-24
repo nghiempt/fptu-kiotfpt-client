@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function CategoryMenu() {
   return (
-    <div className="w-full flex justify-center border mb-5 py-3">
+    <div className="w-full flex justify-center mb-5 py-3 bg-[rgb(var(--quaternary-rgb))] text-white">
       <div className="w-3/4 flex justify-between font-medium">
         <div className="flex gap-x-5">
           <div className="flex gap-x-2">
@@ -19,7 +19,14 @@ export default function CategoryMenu() {
           <Link href={ROUTE.PRODUCT}>Top Deals</Link>
           <Link href={ROUTE.PRODUCT}>Popular Brand</Link>
           <Link href={ROUTE.PRODUCT}>Popular Category</Link>
-          <Link href={ROUTE.PRODUCT}>Discount</Link>
+          <Link
+            href={{
+              pathname: ROUTE.PRODUCT,
+              query: { filter: "discount" }
+            }}
+          >
+            Discount
+          </Link>
           <div className="flex">
             <div>Help&nbsp;</div>
             <ExpandMoreIcon />

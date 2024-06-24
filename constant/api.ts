@@ -11,8 +11,10 @@ export const API = {
   GET_ALL_CATEGORIES: `${HOST}/category/get-all`,
   GET_POPULAR_CATEGORIES: `${HOST}/category/popular`,
   GET_PRODUCTS_TOPDEAL: `${HOST}/product/top-deal`,
+  GET_ALL_BRAND: `${HOST}/brand/get-all`,
   GET_POPULAR_SHOP: `${HOST}/shop/popular`,
   //
+  ADD_TO_CART: `${HOST}/add-to-cart`,
   GET_CART_BY_ACCOUNT_ID: `${HOST}/cart`,
   //
   SEARCH_PRODUCT: `${HOST}/product/search`,
@@ -21,7 +23,6 @@ export const API = {
   //
   GET_SHOP_BY_ID: `${HOST}/shop/profile`,
   GET_PRODUCT_BY_SHOP_ID: `${HOST}/product/get-by-shop`,
-
   // Profile page
   GET_PROFILE_BY_ID: `${HOST}/profile`,
   UPDATE_PROFILE: `${HOST}/profile/update-profile`,

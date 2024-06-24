@@ -31,31 +31,31 @@ export default function Footer() {
         <div className="w-3/4 flex grid grid-cols-5">
           <div className="flex flex-col gap-2 text-gray-300">
             <div className="font-bold text-gray-200 text-lg">About Us</div>
-            <div>About Us</div>
-            <div>Find store</div>
-            <div>Categories</div>
-            <div>Blogs</div>
+            <div>Company History</div>
+            <div>Our Team</div>
+            <div>Mission & Vision</div>
+            <div>Careers</div>
           </div>
           <div className="flex flex-col gap-2 text-gray-300">
             <div className="font-bold text-gray-200 text-lg">Partnership</div>
-            <div>About Us</div>
-            <div>Find store</div>
-            <div>Categories</div>
-            <div>Blogs</div>
+            <div>Business Opportunities</div>
+            <div>Become a Partner</div>
+            <div>Partner Benefits</div>
+            <div>Partnership FAQs</div>
           </div>
           <div className="flex flex-col gap-2 text-gray-300">
             <div className="font-bold text-gray-200 text-lg">Information</div>
-            <div>About Us</div>
-            <div>Find store</div>
-            <div>Categories</div>
-            <div>Blogs</div>
+            <div>Privacy Policy</div>
+            <div>Terms & Conditions</div>
+            <div>Cookie Policy</div>
+            <div>Contact Information</div>
           </div>
           <div className="flex flex-col gap-2 text-gray-300">
             <div className="font-bold text-gray-200 text-lg">For users</div>
-            <div>About Us</div>
-            <div>Find store</div>
-            <div>Categories</div>
-            <div>Blogs</div>
+            <div>User Guide</div>
+            <div>FAQ</div>
+            <div>Customer Support</div>
+            <div>Feedback and Suggestions</div>
           </div>
           <div className="flex flex-col gap-2 text-gray-300">
             <div className="font-bold text-gray-200 text-lg">Get App</div>

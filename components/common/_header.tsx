@@ -64,21 +64,9 @@ export default function Header() {
               onFocus={showFocusSearch}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="w-3/4 px-4 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:border-[rgb(var(--quaternary-rgb))]"
+              className="w-5/6 px-4 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:border-[rgb(var(--quaternary-rgb))]"
             />
-            <div className="w-1/4 flex justify-center items-center">
-              <div className="w-1/2 px-4 py-2 border-t border-b border-gray-300 cursor-pointer">
-                <select className="focus:outline-none cursor-pointer">
-                  <option value="all">All categories</option>
-                  {
-                    FAKE.CATEGORIES?.map((item: any, index: any) => {
-                      return (
-                        <option key={index} value={index}>{item?.name}</option>
-                      )
-                    })
-                  }
-                </select>
-              </div>
+            <div className="w-1/6 flex justify-center items-center">
               <Link
                 replace
                 scroll={true}
@@ -87,7 +75,7 @@ export default function Header() {
                   pathname: ROUTE.SEARCH,
                   query: { key: searchInput }
                 }}
-                className="w-1/2 px-4 py-2 border font-semibold border-[rgb(var(--quaternary-rgb))] bg-[rgb(var(--quaternary-rgb))] text-white rounded-r-md hover:bg-[rgb(var(--tertiary-rgb))] focus:outline-none">
+                className="w-full px-4 py-2 text-center border font-semibold border-[rgb(var(--quaternary-rgb))] bg-[rgb(var(--quaternary-rgb))] text-white rounded-r-md hover:bg-[rgb(var(--tertiary-rgb))] focus:outline-none">
                 Search
               </Link>
             </div>

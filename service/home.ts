@@ -66,11 +66,22 @@ export const getPopularShop = async () => {
     }
 };
 
+export const getAllBrands = async () => {
+    try {
+        const response = await fetch(API.GET_ALL_BRAND);
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        return false;
+    }
+};
+
 export const HomeService = {
     getAmountCartByAccountID,
     signIn,
     getAllCategories,
     getPopularCategories,
     getProductTopDeal,
-    getPopularShop
+    getPopularShop,
+    getAllBrands
 }

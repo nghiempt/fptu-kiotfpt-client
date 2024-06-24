@@ -34,5 +34,5 @@ export const signUp = async (payload: any) => {
 
 export const AuthService = {
     signIn,
-    signUp
+    signUp,
 }
