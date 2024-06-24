@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Divider } from "@mui/material";
+import CardProduct from "@/components/common/card-product";
+import CategoryMenu from "@/components/common/category-menu";
+import SuperDiscount from "@/components/common/super-discount";
+import DelModal from "@/components/pop-up/del-cart-product";
+import { ROUTE } from "@/constant/route";
+import { CartService } from "@/service/cart";
+import { ProductService } from "@/service/product";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EuroIcon from "@mui/icons-material/Euro";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import LockIcon from "@mui/icons-material/Lock";
+import MessageIcon from "@mui/icons-material/Message";
 import PixIcon from "@mui/icons-material/Pix";
 import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import StyleIcon from "@mui/icons-material/Style";
-import LockIcon from "@mui/icons-material/Lock";
-import MessageIcon from "@mui/icons-material/Message";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import Link from "next/link";
-import { ROUTE } from "@/constant/route";
-import SuperDiscount from "@/components/common/super-discount";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import CardProduct from "@/components/common/card-product";
-import CategoryMenu from "@/components/common/category-menu";
+import { Divider } from "@mui/material";
 import Cookie from "js-cookie";
-import { CartService } from "@/service/cart";
-import DelModal from "@/components/pop-up/del-cart-product";
+import Link from "next/link";
+import React from "react";
 
 type SelectedItems = {
   all: boolean;
@@ -28,17 +28,13 @@ type SelectedItems = {
   products: { [key: string]: boolean };
 };
 
-interface Shop {
-  name: string;
-  thumbnail: string;
-}
-
 type CartItem = {
   shopIndex: number;
   id: string;
   quantity: number;
   note: string;
   total: number;
+  section_id: string;
   shop: any[];
 
   product: {
@@ -71,6 +67,7 @@ export default function Card() {
   const [openDel, setOpenDel] = React.useState(false);
   const [idDel, setIdDel] = React.useState("" as any);
   const [cart, setCart] = React.useState([] as any);
+  const [products, setProducts] = React.useState([] as any);
 
   const [totalProduct, setTotalProduct] = React.useState(0);
   const [selectedItems, setSelectedItems] = React.useState<any>({
@@ -85,7 +82,12 @@ export default function Card() {
       if (c?.result) {
         setCart(c?.data);
       }
+      const p = await ProductService.getAllProducts("1","16");
+      if (p?.result) {
+        setProducts(p?.data);
+      }
     };
+
     fetch();
   }, []);
 
@@ -177,6 +179,7 @@ export default function Card() {
             quantity: item?.quantity,
             note: item?.note,
             total: item?.total,
+            section_id: section?.section_id,
             shopIndex: shopIndex,
             shop: section?.shop,
             product: item?.product,
@@ -205,37 +208,6 @@ export default function Card() {
 
   const selectedProducts = getSelectedProductsInfo();
   const selectedShopInfo = getSelectedShopInfo();
-
-  const cartItems = selectedProducts.map((product: any) => {
-    const shop = selectedShopInfo[product?.shopIndex];
-
-    return {
-      id: product?.id,
-      quantity: product?.quantity,
-      note: product?.note,
-      total: product?.total,
-      shop: shop, // Assign the correct shop info
-
-      product: {
-        id: product?.product?.id,
-        name: product?.product?.name,
-        thumbnail: product?.product?.thumbnail,
-      },
-      variant: {
-        id: product?.variant?.id,
-        price: product?.variant?.price,
-        quantity: product?.variant?.quantity,
-        color: {
-          id: product?.variant?.color?.id,
-          value: product?.variant?.color?.value,
-        },
-        size: {
-          id: product?.variant?.size?.id,
-          value: product?.variant?.size?.value,
-        },
-      },
-    };
-  });
 
   React.useEffect(() => {
     const t = selectedProducts.reduce(
@@ -385,20 +357,22 @@ export default function Card() {
               <ArrowBackIcon />
               &nbsp;Back to shop
             </button>
-            <button
+            {/* <button
               type="submit"
               className="bg-[rgb(var(--primary-rgb))] py-2 px-4 text-[14px] font-semibold rounded-md"
               style={{ color: "white" }}
             >
               Remove all
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="w-1/4">
           <div className="border border-gray-200 rounded-md p-5 mt-4">
             <div className="flex justify-between">
               <div className="pb-1 text-[16px]">Subtotal</div>
-              <div className="text-black pb-1 text-[16px] text-left font-semibold"></div>
+              <div className="text-black pb-1 text-[16px] text-left font-semibold">
+                ${totalProduct}
+              </div>
             </div>
 
             <Divider className="pt-2" />
@@ -470,8 +444,8 @@ export default function Card() {
           <h1 className="font-black text-2xl mb-4 text-gray-700">
             Related Products
           </h1>
-          <div className="grid grid-cols-5 gap-x-4">
-            {[].slice(0, 5)?.map((item: any, index: any) => {
+          <div className="grid grid-cols-6 gap-x-4">
+            {products.slice(0, 6)?.map((item: any, index: any) => {
               return <CardProduct item={item} index={index} limit={100} />;
             })}
           </div>

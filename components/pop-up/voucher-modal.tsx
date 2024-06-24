@@ -35,7 +35,7 @@ export default function VoucherModal({
   useEffect(() => {
     const getVoucher = async () => {
       if (!shopID) {
-        alert("shopID is required")
+        console.log("shopID is required")
         return;
       }
 
@@ -78,11 +78,12 @@ export default function VoucherModal({
       );
 
       if (selectedVoucher) {
-        setValueVoucher(selectedVoucher.value);
+        setValueVoucher(selectedVoucher?.value);
       }
-      alert("Voucher selected");
+      alert("Voucher selected");     
     }
   };
+
   useEffect(() => {
     if (idVoucher) {
       localStorage.setItem("idVoucher", idVoucher);

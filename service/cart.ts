@@ -10,6 +10,9 @@ export const addToCart = async (dataC: any) => {
       body: JSON.stringify(dataC),
     });
     const data = await response.json();
+    console.log(dataC);
+    console.log(data);
+    
     return data;
   } catch (err) {
     console.log(err);

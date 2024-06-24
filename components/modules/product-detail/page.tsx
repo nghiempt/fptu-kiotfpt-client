@@ -110,9 +110,9 @@ export default function ProductDetail() {
 
   React.useEffect(() => {
     const fetch = async () => {
-      const pros = await ProductService.searchProduct("", "1", "10");
+      const pros = await ProductService.getAllProducts("1", "10");
       if (pros?.result) {
-        setProducts(pros?.data?.products);
+        setProducts(pros?.data);
       }
       const proDetail = await ProductService.getProductByID(
         searchParams.get("id") || "0"
@@ -223,12 +223,23 @@ export default function ProductDetail() {
               </span>
             </div>
 
-            <div className="flex items-center">
-              {[1, 2, 3, 4]?.map((item: any, index: any) => {
-                return <StarIcon className="text-[#FF9017]" />;
-              })}
+            <div className="flex items-center w-full">
+              {Array.from(
+                { length: Math.floor(currentProduct?.rate) },
+                (_, index) => (
+                  <StarIcon key={index} className="text-[#FF9017]" />
+                )
+              )}
+              {currentProduct?.shop?.rate % 1 !== 0 && (
+                <StarHalfIcon className="text-[#FF9017]" />
+              )}
+              {Array.from(
+                { length: 5 - Math.ceil(currentProduct?.rate) },
+                (_, index) => (
+                  <StarIcon key={`empty-${index}`} className="text-[#D4CDC5]" />
+                )
+              )}
               <div className="flex jusitfy-center items-center gap-x-2">
-                <StarIcon className="text-[#D4CDC5]" />
                 <FiberManualRecordIcon
                   className=" text-[#DBDBDB]"
                   style={{ width: "8px" }}
@@ -388,10 +399,7 @@ export default function ProductDetail() {
                 <LanguageIcon style={{ width: "20px", height: "20px" }} />
                 <h1>Worldwide Shipping</h1>
               </div>
-              <button className="w-full py-2 bg-[rgb(var(--quaternary-rgb))] text-white border rounded-[6px] mt-5 mb-2">
-                Send inquiry
-              </button>
-              <button className="w-full py-2 bg-white text-[rgb(var(--quaternary-rgb))] border rounded-[6px]">
+              <button className="w-full py-2 mt-2 bg-white text-[rgb(var(--quaternary-rgb))] border rounded-[6px]">
                 Seller’s profile
               </button>
             </div>

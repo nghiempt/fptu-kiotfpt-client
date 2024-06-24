@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { limitString } from "@/utils/helper";
@@ -41,6 +41,7 @@ export default function CardProduct({
 
     return stars;
   };
+
 
   return (
     <Link

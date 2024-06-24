@@ -62,8 +62,8 @@ export default function Checkout() {
       address_id: idAddresses,
       sections: cartData.map((item: any) => ({
         desc: item?.product?.name,
-        item_id: item?.product?.id,
-        section_id: item?.variant?.id,
+        item_id: [item?.product?.id],
+        section_id: item?.section_id,
       })),
       voucherId: idVoucher ? parseInt(idVoucher) : 0,
     };
@@ -337,7 +337,7 @@ export default function Checkout() {
           <div className="flex justify-between items-center">
             <h1 className="text-[18px] font-bold">Total</h1>
             <h1 className="text-[18px] font-bold">
-              ${subtotal * (1 - valueVoucher / 100)}
+              ${(subtotal * (1 - valueVoucher / 100)).toFixed(2)}
             </h1>
           </div>
           <button

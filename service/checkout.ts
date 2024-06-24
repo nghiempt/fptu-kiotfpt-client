@@ -30,7 +30,7 @@ const checkout = async (dataC: string) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataC),
+      body: dataC,
     });
     const data = await response.json();
     console.log(dataC);
