@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import Cookie from 'js-cookie';
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { ProfileService } from "@/service/profile";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
 
 interface UpdateAddressProps {
   onCancel: () => void;
@@ -22,8 +22,10 @@ const UpdateAddress: React.FC<UpdateAddressProps> = ({ onCancel, addressID }) =>
   const [addressDetail, setAddressDetail] = useState('' as any);
   const [provinces, setProvinces] = useState([] as any);
   const [districts, setDistricts] = useState([] as any);
+  const [isdefault, setIsdefault] = useState(false as boolean);
 
   const handleUpdateAddress = async () => {
+    console.log(province, district, addressDetail);
     if (province === '' || district === '' || addressDetail === '') {
       alert('Please fill in all fields');
       return;
@@ -42,9 +44,21 @@ const UpdateAddress: React.FC<UpdateAddressProps> = ({ onCancel, addressID }) =>
           alert('Update Address successfully');
           window.location.reload();
         }
-
       }
       fetch();
+
+      if (isdefault) {
+        const fetch2 = async () => {
+          const prof = await ProfileService.setAddressDefault(addressID);
+          if (prof?.result) {
+            console.log(prof?.data);
+            alert('Update Address successfully');
+            window.location.reload();
+          }
+        }
+        fetch2();
+      }
+
     }
   }
 
@@ -102,6 +116,11 @@ const UpdateAddress: React.FC<UpdateAddressProps> = ({ onCancel, addressID }) =>
       }
     }
     fetch();
+  }
+
+  const handleChangeDefault = () => {
+    console.log(!isdefault);
+    setIsdefault(!isdefault);
   }
 
   useEffect(() => {
@@ -204,7 +223,7 @@ const UpdateAddress: React.FC<UpdateAddressProps> = ({ onCancel, addressID }) =>
         <div className="w-3/4 flex justify-between items-center">
           <h1 className="w-1/4"></h1>
           <div className="w-3/4 flex gap-2">
-            <CheckBoxOutlineBlankIcon />
+            <Checkbox onChange={handleChangeDefault} />
             <h1>Set as default address</h1>
           </div>
         </div>

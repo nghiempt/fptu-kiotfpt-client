@@ -68,14 +68,15 @@ const YourComponent = () => {
             </div>
             {addresses?.map((item: any, index: any) => {
               return (
-                <div className="w-full flex flex-col bg-gray-50 rounded-lg p-5">
+                <div key={index} className="w-full flex flex-col bg-gray-50 rounded-lg p-5">
                   <div className="flex justify-between items-center">
                     <div className="flex gap-x-4">
                       <h1 className="font-semibold text-[14px]">Nhà Riêng</h1>
-                      <div className="flex gap-x-1 items-center bg-[rgb(var(--quaternary-rgb))] text-white px-2 rounded-md">
+                      {item?.isdefault && <div className="flex gap-x-1 items-center bg-[rgb(var(--quaternary-rgb))] text-white px-2 rounded-md">
                         <CheckCircleOutlineIcon style={{ fontSize: "12px" }} />
                         <h1 className="text-[12px]">Default</h1>
-                      </div>
+                      </div>}
+
                     </div>
                     <button onClick={() => handleEditAddress(item?.address_id)} className="text-[rgb(var(--quaternary-rgb))] box-border border border-[rgb(var(--quaternary-rgb))] py-1 px-8 rounded-md">
                       Edit

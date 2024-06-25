@@ -3,19 +3,13 @@
 import React, { useEffect } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { limitString } from "@/utils/helper";
 import Link from "next/link";
 import { ROUTE } from "@/constant/route";
 
-export default function CardProduct({
-  item,
-  index,
-  limit,
-}: {
-  item: any;
-  index: any;
-  limit: any;
-}) {
+export default function CardProduct({ item, index, limit, isFavouriteProductCart = false }: { item: any, index: any, limit: any, isFavouriteProductCart?: any }) {
+
   const renderStar = (rate: number) => {
     const stars = [];
 
@@ -40,7 +34,10 @@ export default function CardProduct({
     }
 
     return stars;
-  };
+  }
+
+  console.log("ne ne ne");
+  console.log(item);
 
 
   return (
@@ -51,7 +48,13 @@ export default function CardProduct({
       }}
       key={index}
       className="border border-gray-200 rounded-md p-2 cursor-pointer"
+      style={{ position: 'relative' }}
     >
+      {isFavouriteProductCart && (
+        <button onClick={() => isFavouriteProductCart(item?.id)} className="absolute top-2 right-2" style={{ backgroundColor: 'rgb(var(--primary-rgb))', color: '#ffffff', padding: '2px', borderRadius: '4px' }}>
+          <DeleteIcon />
+        </button>
+      )}
       <img src={item?.thumbnail[0]?.link} alt="img" />
       <div className="p-4">
         <div className="flex gap-x-2 items-center">

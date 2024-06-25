@@ -8,6 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
 
 interface CreateAddressProps {
   onCancel: () => void;
@@ -20,6 +21,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
   const [addressDetail, setAddressDetail] = useState('' as any);
   const [provinces, setProvinces] = useState([] as any);
   const [districts, setDistricts] = useState([] as any);
+  const [isdefault, setIsdefault] = useState(false as boolean);
 
   const handleChangeProvince = (event: SelectChangeEvent) => {
     setProvince(event.target.value as string);
@@ -48,7 +50,8 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
         account_profile_id: accountID,
         address_value: addressDetail,
         district_id: district,
-        province_id: province
+        province_id: province,
+        default: isdefault,
       };
       const fetch = async () => {
         const prof = await ProfileService.createAddress(person);
@@ -61,6 +64,10 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
       }
       fetch();
     }
+  }
+
+  const handleChangeDefault = () => {
+    setIsdefault(!isdefault);
   }
 
   useEffect(() => {
@@ -117,7 +124,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
               >
                 {provinces.map((item: any, index: any) => {
                   return (
-                    <MenuItem value={item?.id}>{item?.value}</MenuItem>
+                    <MenuItem key={index} value={item?.id}>{item?.value}</MenuItem>
                   );
                 })};
               </Select>
@@ -138,7 +145,7 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
               >
                 {districts.map((item: any, index: any) => {
                   return (
-                    <MenuItem value={item?.id}>{item?.value}</MenuItem>
+                    <MenuItem key={index} value={item?.id}>{item?.value}</MenuItem>
                   );
                 })};
               </Select>
@@ -186,13 +193,13 @@ const CreateAddress: React.FC<CreateAddressProps> = ({ onCancel }) => {
             </div>
           </div>
         </div> */}
-        {/* <div className="w-3/4 flex justify-between items-center">
+        <div className="w-3/4 flex justify-between items-center">
           <h1 className="w-1/4"></h1>
           <div className="w-3/4 flex gap-2">
-            <CheckBoxOutlineBlankIcon />
+            <Checkbox onChange={handleChangeDefault} />
             <h1>Set as default address</h1>
           </div>
-        </div> */}
+        </div>
         <div className="w-3/4 flex justify-between items-center mt-6">
           <h1 className="w-1/4"></h1>
           <div className="w-3/4 flex gap-2">

@@ -83,6 +83,22 @@ const getAllWishListByAccountID = async (ID: string) => {
     }
 };
 
+const deleteFavouriteProduct = async (ID: string) => {
+    try {
+
+        const response = await fetch(API.DELETE_FAVOURITE_PRODUCT + `/${ID}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        return false;
+    }
+};
+
 const getAllTracsactionByAccountID = async (ID: string) => {
     try {
         const response = await fetch(API.GET_ALL_TRANSACTION_BY_ACCOUNT_ID + `?accountID=${ID}`);
@@ -173,6 +189,37 @@ const getAddressByID = async (ID: string) => {
     }
 };
 
+const setAddressDefault = async (ID: string) => {
+    try {
+        const response = await fetch(API.SET_ADDRESS_BEFAULT + `/${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+
+const getAllCommentByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_COMMENT_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllProductNeedCommentByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_PRODUCT_NEED_COMMENT_BY_ACCOUNT_ID + `?accountId=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
 export const ProfileService = {
     getProfileByID,
     updateProfile,
@@ -188,4 +235,8 @@ export const ProfileService = {
     updatePassword,
     updateAddress,
     getAddressByID,
+    deleteFavouriteProduct,
+    getAllCommentByAccountID,
+    getAllProductNeedCommentByAccountID,
+    setAddressDefault,
 }

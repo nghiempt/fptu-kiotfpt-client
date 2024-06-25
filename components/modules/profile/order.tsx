@@ -118,6 +118,7 @@ export default function Order() {
                   {item?.status?.id === 24 && <h1>Delivering</h1>}
                   {item?.status?.id === 25 && <h1>Cancel</h1>}
                   {item?.status?.id === 26 && <h1>Returning</h1>}
+                  {item?.status?.id === 23 && <h1>Rejected</h1>}
                   - {item?.shop?.name}
                 </div>
                 <Divider className="pt-2" />
@@ -165,37 +166,160 @@ export default function Order() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <div className="flex flex-col gap-4">
-          {[1]?.map((item: any, index: any) => {
+          {orders?.filter((item: any) => item?.status?.id === 21)?.map((item: any, index: any) => {
             return (
-              <div className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
+              <div key={index} className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
                 <div className="flex gap-x-2 text-gray-500">
                   <LocalShippingIcon />
-                  <h1>Successful Delivery</h1>
+                  {item?.status?.id === 27 && <h1>Successful Delivery</h1>}
+                  {item?.status?.id === 21 && <h1>Pending Shop</h1>}
+                  {item?.status?.id === 24 && <h1>Delivering</h1>}
+                  {item?.status?.id === 25 && <h1>Cancel</h1>}
+                  {item?.status?.id === 26 && <h1>Returning</h1>}
+                  {item?.status?.id === 23 && <h1>Rejected</h1>}
+                  - {item?.shop?.name}
                 </div>
                 <Divider className="pt-2" />
-                <div className="w-full flex gap-x-2">
-                  <img className="rounded-md" src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" style={{ width: "10%" }} />
-                  <div className="w-full flex flex-col gap-2">
-                    <div className="flex justify-between">
-                      <h1 className="font-medium text-[14px]">
-                        Quạt sạc Sunhouse SHD7116 (25W) - Hàng chính hãng
-                      </h1>
-                      <h1 className="text-[16px] font-medium">270.000đ</h1>
+                {item?.product?.map((item2: any, index: any) => {
+                  return (
+                    <div key={index} className="w-full flex gap-x-2">
+                      <img className="rounded-md" src={item2?.thumbnail} alt="" style={{ width: "10%" }} />
+                      <div className="w-full flex flex-col gap-2">
+                        <div className="flex justify-between">
+                          <h1 className="font-medium text-[14px]">
+                            {item2?.name}
+                          </h1>
+                          <h1 className="text-[16px] font-medium"> ${item2?.variant?.price}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <StoreIcon />
+                          <h1>Amount: {item2?.amount}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <IntegrationInstructionsIcon />
+                          <h1>{item2?.variant?.color?.value} - {item2?.variant?.size?.value}</h1>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
-                      <StoreIcon />
-                      <h1>Minh Tuấn Mobile</h1>
-                    </div>
-                    <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
-                      <IntegrationInstructionsIcon />
-                      <h1>KIOT3780</h1>
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
+
                 <Divider />
                 <div className="flex gap-x-2 justify-end text-[16px] items-center">
                   <h1 className="text-gray-400">Total amount:</h1>
-                  <h1 className="font-semibold text-xl">270.000đ</h1>
+                  <h1 className="font-semibold text-xl">${item?.total}</h1>
+                </div>
+                <div className="flex gap-x-2 justify-end text-blue-500">
+                  <button className="bg-[rgb(var(--primary-rgb))] text-white rounded-md p-2">
+                    Repurchase
+                  </button>
+                  <button className="bg-[rgb(var(--quaternary-rgb))] text-white rounded-md p-2">
+                    See details
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        <div className="flex flex-col gap-4">
+          {orders?.filter((item: any) => item?.status?.id === 24)?.map((item: any, index: any) => {
+            return (
+              <div key={index} className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
+                <div className="flex gap-x-2 text-gray-500">
+                  <LocalShippingIcon />
+                  {item?.status?.id === 27 && <h1>Successful Delivery</h1>}
+                  {item?.status?.id === 21 && <h1>Pending Shop</h1>}
+                  {item?.status?.id === 24 && <h1>Delivering</h1>}
+                  {item?.status?.id === 25 && <h1>Cancel</h1>}
+                  {item?.status?.id === 26 && <h1>Returning</h1>}
+                  {item?.status?.id === 23 && <h1>Rejected</h1>}
+                  - {item?.shop?.name}
+                </div>
+                <Divider className="pt-2" />
+                {item?.product?.map((item2: any, index: any) => {
+                  return (
+                    <div key={index} className="w-full flex gap-x-2">
+                      <img className="rounded-md" src={item2?.thumbnail} alt="" style={{ width: "10%" }} />
+                      <div className="w-full flex flex-col gap-2">
+                        <div className="flex justify-between">
+                          <h1 className="font-medium text-[14px]">
+                            {item2?.name}
+                          </h1>
+                          <h1 className="text-[16px] font-medium"> ${item2?.variant?.price}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <StoreIcon />
+                          <h1>Amount: {item2?.amount}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <IntegrationInstructionsIcon />
+                          <h1>{item2?.variant?.color?.value} - {item2?.variant?.size?.value}</h1>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <Divider />
+                <div className="flex gap-x-2 justify-end text-[16px] items-center">
+                  <h1 className="text-gray-400">Total amount:</h1>
+                  <h1 className="font-semibold text-xl">${item?.total}</h1>
+                </div>
+                <div className="flex gap-x-2 justify-end text-blue-500">
+                  <button className="bg-[rgb(var(--primary-rgb))] text-white rounded-md p-2">
+                    Repurchase
+                  </button>
+                  <button className="bg-[rgb(var(--quaternary-rgb))] text-white rounded-md p-2">
+                    See details
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        <div className="flex flex-col gap-4">
+          {orders?.filter((item: any) => item?.status?.id === 27)?.map((item: any, index: any) => {
+            return (
+              <div key={index} className="w-full flex flex-col gap-4 gap-x-4 bg-gray-50 rounded-lg p-5">
+                <div className="flex gap-x-2 text-gray-500">
+                  <LocalShippingIcon />
+                  <h1>Successful Delivery</h1>
+
+                  - {item?.shop?.name}
+                </div>
+                <Divider className="pt-2" />
+                {item?.product?.map((item2: any, index: any) => {
+                  return (
+                    <div key={index} className="w-full flex gap-x-2">
+                      <img className="rounded-md" src={item2?.thumbnail} alt="" style={{ width: "10%" }} />
+                      <div className="w-full flex flex-col gap-2">
+                        <div className="flex justify-between">
+                          <h1 className="font-medium text-[14px]">
+                            {item2?.name}
+                          </h1>
+                          <h1 className="text-[16px] font-medium"> ${item2?.variant?.price}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <StoreIcon />
+                          <h1>Amount: {item2?.amount}</h1>
+                        </div>
+                        <div className="flex gap-x-1 text-gray-400 text-[12px] items-center">
+                          <IntegrationInstructionsIcon />
+                          <h1>{item2?.variant?.color?.value} - {item2?.variant?.size?.value}</h1>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <Divider />
+                <div className="flex gap-x-2 justify-end text-[16px] items-center">
+                  <h1 className="text-gray-400">Total amount:</h1>
+                  <h1 className="font-semibold text-xl">${item?.total}</h1>
                 </div>
                 <div className="flex gap-x-2 justify-end text-blue-500">
                   <button className="bg-[rgb(var(--primary-rgb))] text-white rounded-md p-2">
