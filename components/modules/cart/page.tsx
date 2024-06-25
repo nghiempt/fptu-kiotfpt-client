@@ -1,25 +1,26 @@
 "use client";
 
-import React from "react";
-import { Divider } from "@mui/material";
+import CardProduct from "@/components/common/card-product";
+import CategoryMenu from "@/components/common/category-menu";
+import SuperDiscount from "@/components/common/super-discount";
+import DelModal from "@/components/pop-up/del-cart-product";
+import { ROUTE } from "@/constant/route";
+import { CartService } from "@/service/cart";
+import { ProductService } from "@/service/product";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EuroIcon from "@mui/icons-material/Euro";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import LockIcon from "@mui/icons-material/Lock";
+import MessageIcon from "@mui/icons-material/Message";
 import PixIcon from "@mui/icons-material/Pix";
 import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import StyleIcon from "@mui/icons-material/Style";
-import LockIcon from "@mui/icons-material/Lock";
-import MessageIcon from "@mui/icons-material/Message";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import Link from "next/link";
-import { ROUTE } from "@/constant/route";
-import SuperDiscount from "@/components/common/super-discount";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import CardProduct from "@/components/common/card-product";
-import CategoryMenu from "@/components/common/category-menu";
+import { Divider } from "@mui/material";
 import Cookie from "js-cookie";
-import { CartService } from "@/service/cart";
+import Link from "next/link";
+import React from "react";
 
 type SelectedItems = {
   all: boolean;
@@ -27,17 +28,13 @@ type SelectedItems = {
   products: { [key: string]: boolean };
 };
 
-interface Shop {
-  name: string;
-  thumbnail: string;
-}
-
 type CartItem = {
   shopIndex: number;
   id: string;
   quantity: number;
   note: string;
   total: number;
+  section_id: string;
   shop: any[];
 
   product: {
@@ -67,8 +64,12 @@ type ShopItem = {
 
 export default function Card() {
   const accountID = Cookie.get("accountID");
-
+  const [openDel, setOpenDel] = React.useState(false);
+  const [idDel, setIdDel] = React.useState("" as any);
   const [cart, setCart] = React.useState([] as any);
+  const [products, setProducts] = React.useState([] as any);
+
+  const [totalProduct, setTotalProduct] = React.useState(0);
   const [selectedItems, setSelectedItems] = React.useState<any>({
     all: false,
     shops: {},
@@ -81,11 +82,31 @@ export default function Card() {
       if (c?.result) {
         setCart(c?.data);
       }
-      console.log(c?.data);
+      const p = await ProductService.getAllProducts("1","16");
+      if (p?.result) {
+        setProducts(p?.data);
+      }
     };
+
     fetch();
   }, []);
 
+  const UpdateAmount = async (id: any, amount: any) => {
+    const upP = await CartService.updateAmountProduct(id, amount);
+    if (upP) {
+      window.location.reload();
+    } else {
+      alert("Update fail");
+    }
+  };
+
+  const handleOpenDel = (id: any) => {
+    setOpenDel(true);
+    setIdDel(id);
+  };
+  const handleCloseDel = () => {
+    setOpenDel(false);
+  };
   const handleSelectAll = () => {
     const newSelectedItems = { ...selectedItems };
     newSelectedItems.all = !selectedItems.all;
@@ -158,6 +179,7 @@ export default function Card() {
             quantity: item?.quantity,
             note: item?.note,
             total: item?.total,
+            section_id: section?.section_id,
             shopIndex: shopIndex,
             shop: section?.shop,
             product: item?.product,
@@ -171,64 +193,34 @@ export default function Card() {
   };
 
   const getSelectedShopInfo = (): { [key: string]: ShopItem } => {
-  const selectedShopInfo: { [key: string]: ShopItem } = {};
-  cart.forEach((section: any, shopIndex: any) => {
-    if (selectedItems.shops[shopIndex]) {
-      selectedShopInfo[shopIndex] = {
-        name: section?.shop?.name,
-        thumbnail: section?.shop?.thumbnail,
-      };
-    }
-  });
-  
-  return selectedShopInfo;
-}
-  
+    const selectedShopInfo: { [key: string]: ShopItem } = {};
+    cart.forEach((section: any, shopIndex: any) => {
+      if (selectedItems.shops[shopIndex]) {
+        selectedShopInfo[shopIndex] = {
+          name: section?.shop?.name,
+          thumbnail: section?.shop?.thumbnail,
+        };
+      }
+    });
+
+    return selectedShopInfo;
+  };
 
   const selectedProducts = getSelectedProductsInfo();
   const selectedShopInfo = getSelectedShopInfo();
 
-  const cartItems = selectedProducts.map((product:any) => {
-
-    
-    const shop = selectedShopInfo[product?.shopIndex];
-
-    return {
-      id: product?.id,
-      quantity: product?.quantity,
-      note: product?.note,
-      total: product?.total,
-      shop: shop, // Assign the correct shop info
-
-      product: {
-        id: product?.product?.id,
-        name: product?.product?.name,
-        thumbnail: product?.product?.thumbnail,
-      },
-      variant: {
-        id: product?.variant?.id,
-        price: product?.variant?.price,
-        quantity: product?.variant?.quantity,
-        color: {
-          id: product?.variant?.color?.id,
-          value: product?.variant?.color?.value,
-        },
-        size: {
-          id: product?.variant?.size?.id,
-          value: product?.variant?.size?.value,
-        },
-      },
-    };
-  });
-
   React.useEffect(() => {
-    console.log(selectedProducts);
-    
+    const t = selectedProducts.reduce(
+      (sum, product) => sum + (product?.total || 0),
+      0
+    );
+    setTotalProduct(t);
     localStorage.setItem("dataCart", JSON.stringify(selectedProducts));
   }, [selectedProducts, selectedShopInfo]);
 
   return (
     <div className="w-full pt-4 flex flex-col justify-center items-center">
+      <DelModal open={openDel} handleClose={handleCloseDel} id={idDel} />
       <CategoryMenu />
       <div className="w-3/4 flex justify-start font-black text-2xl text-gray-700">
         My Cart
@@ -266,7 +258,7 @@ export default function Card() {
                         key={itemIndex}
                         className="w-full flex justify-between pl-5 box-border"
                       >
-                        <div className="flex justify-center items-center gap-x-5">
+                        <div className="flex justify-center items-center gap-x-5 mt-4">
                           <input
                             type="checkbox"
                             checked={
@@ -290,6 +282,9 @@ export default function Card() {
                               {item?.product?.name}
                             </div>
                             <div className="font-regular text-gray-500 mb-2">
+                              <span>Price: ${item?.variant?.price}</span>
+                            </div>
+                            <div className="font-regular text-gray-500 mb-2">
                               <div>
                                 <span>
                                   Color: {item?.variant?.color?.value}
@@ -300,42 +295,49 @@ export default function Card() {
                                 </span>
                               </div>
                             </div>
-
-                            <div className="flex gap-x-2">
-                              <div className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white">
-                                <DeleteIcon />
-                              </div>
-                              <div className="bg-[rgb(var(--quaternary-rgb))] p-1 rounded-md text-white">
-                                <BookmarkIcon />
+                          </div>
+                        </div>
+                        <div className="my-5 flex gap-x-4 items-center">
+                          <div>
+                            <div className="mb-2 text-center text-xl font-semibold border rounded-md py-2">
+                              ${item?.total}
+                            </div>
+                            <div className="flex">
+                              <div className="flex justify-end gap-x-1">
+                                <button
+                                  type="submit"
+                                  className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
+                                  style={{ color: "gray" }}
+                                  onClick={() =>
+                                    UpdateAmount(item?.id, item?.quantity - 1)
+                                  }
+                                >
+                                  -
+                                </button>
+                                <input
+                                  type="text"
+                                  className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sm bg-[rgb(var(--quaternary-rgb))]"
+                                  value={item?.quantity}
+                                />
+                                <button
+                                  type="submit"
+                                  className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sm"
+                                  style={{ color: "gray" }}
+                                  onClick={() =>
+                                    UpdateAmount(item?.id, item?.quantity + 1)
+                                  }
+                                >
+                                  +
+                                </button>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="my-5">
-                          <div className="mb-2 text-right text-xl font-semibold">
-                            ${item?.total}
-                          </div>
-                          <div className="flex">
-                            <div className="flex justify-end gap-x-1">
-                              <button
-                                type="submit"
-                                className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
-                                style={{ color: "gray" }}
-                              >
-                                -
-                              </button>
-                              <input
-                                type="text"
-                                className="w-12 text-center text-white font-bold border border-[rgb(var(--quaternary-rgb))] rounded-sx bg-[rgb(var(--quaternary-rgb))]"
-                                value="1"
-                              />
-                              <button
-                                type="submit"
-                                className="px-4 text-[16px] font-semibold border border-gray-200 rounded-sx"
-                                style={{ color: "gray" }}
-                              >
-                                +
-                              </button>
+                          <div>
+                            <div
+                              className="bg-[rgb(var(--primary-rgb))] p-1 rounded-md text-white "
+                              onClick={() => handleOpenDel(item?.id)}
+                            >
+                              <DeleteIcon className="cursor-pointer" />
                             </div>
                           </div>
                         </div>
@@ -355,46 +357,28 @@ export default function Card() {
               <ArrowBackIcon />
               &nbsp;Back to shop
             </button>
-            <button
+            {/* <button
               type="submit"
               className="bg-[rgb(var(--primary-rgb))] py-2 px-4 text-[14px] font-semibold rounded-md"
               style={{ color: "white" }}
             >
               Remove all
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="w-1/4">
-          <div className="border border-gray-200 rounded-md p-3 pb-2 mt-5">
-            <div>Have a coupon?</div>
-            <div className="flex my-2">
-              <input
-                type="text"
-                placeholder="Add a coupon"
-                className="w-1/2 px-4 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:border-blue-500"
-              />
-              <button className="px-4 py-2 bg-[rgb(var(--quaternary-rgb))] text-white border-t border-r border-b border-[rgb(var(--quaternary-rgb))] rounded-r-md hover:font-bold">
-                Apply
-              </button>
-            </div>
-          </div>
           <div className="border border-gray-200 rounded-md p-5 mt-4">
             <div className="flex justify-between">
               <div className="pb-1 text-[16px]">Subtotal</div>
-              <div className="text-black pb-1 text-[16px] text-left font-semibold"></div>
+              <div className="text-black pb-1 text-[16px] text-left font-semibold">
+                ${totalProduct}
+              </div>
             </div>
-            <div className="flex justify-between">
-              <div className="pb-1 text-[16px]">Discount</div>
-              <div className="text-[rgb(var(--primary-rgb))] pb-1 text-[16px] text-left font-semibold"></div>
-            </div>
-            <div className="flex justify-between">
-              <div className="pb-1 text-[16px]">Tax</div>
-              <div className="text-[rgb(var(--tertiary-rgb))] pb-1 text-[16px] text-left font-semibold"></div>
-            </div>
+
             <Divider className="pt-2" />
             <div className="flex justify-between font-bold pt-2">
               <div className="text-[18px]">Total</div>
-              <div className="text-[18px] font-bold"></div>
+              <div className="text-[18px] font-bold">${totalProduct}</div>
             </div>
             <div className="my-2">
               <Link
@@ -460,8 +444,8 @@ export default function Card() {
           <h1 className="font-black text-2xl mb-4 text-gray-700">
             Related Products
           </h1>
-          <div className="grid grid-cols-5 gap-x-4">
-            {[].slice(0, 5)?.map((item: any, index: any) => {
+          <div className="grid grid-cols-6 gap-x-4">
+            {products.slice(0, 6)?.map((item: any, index: any) => {
               return <CardProduct item={item} index={index} limit={100} />;
             })}
           </div>

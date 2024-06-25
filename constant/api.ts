@@ -16,6 +16,8 @@ export const API = {
   //
   ADD_TO_CART: `${HOST}/add-to-cart`,
   GET_CART_BY_ACCOUNT_ID: `${HOST}/cart`,
+  DELETE_PRODUCT_IN_CART: `${HOST}/item/delete`,
+  UPDATE_AMOUNT_PRODUCT: `${HOST}/item/update-amount`,
   //
   SEARCH_PRODUCT: `${HOST}/product/search`,
   //
@@ -26,6 +28,15 @@ export const API = {
   // Profile page
   GET_PROFILE_BY_ID: `${HOST}/profile`,
   UPDATE_PROFILE: `${HOST}/profile/update-profile`,
+  //
+  GET_ALL_ADDRESS_BY_ACCOUNT_ID: `${HOST}/address/get-all`,
+  //
+  GET_VOUCHER_BY_SHOP_ID: `${HOST}/voucher/get-by-shop`,
+  //
+  GET_ALL_BRAND: `${HOST}/brand/get-all`,
+  GET_ALL_PRODUCTS: `${HOST}/product/get-all`,
+  //
+  CHECKOUT: `${HOST}/order/checkout`,
   GET_NOTIFY_BY_ACCOUNT_ID: `${HOST}/notify/get-all`,
   DELTE_NOTIFY_BY_ID: `${HOST}/notify/delete`,
   GET_ALL_ORDER_BY_ACCOUNT_ID: `${HOST}/order/get-all`,

@@ -2,21 +2,77 @@
 
 import CategoryMenu from "@/components/common/category-menu";
 import VoucherModal from "@/components/pop-up/voucher-modal";
+import { CheckoutService } from "@/service/checkout";
+import Cookie from "js-cookie";
 import { Divider } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 export default function Checkout() {
   const cartDataStore = localStorage.getItem("dataCart") as any;
-
+  const idVoucher = localStorage.getItem("idVoucher");
+  const valueVoucherStr = localStorage.getItem("valueVoucher");
+  const valueVoucher = valueVoucherStr ? parseInt(valueVoucherStr, 10) : 0;
   const [isVoucherPopupOpen, setIsVoucherPopupOpen] = useState(false);
   const [cartData, setCartData] = React.useState([] as any);
+  const accountID = Cookie.get("accountID");
+  const [address, setAddress] = useState([] as any);
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
+  const [showPanel, setShowPanel] = useState(false);
+  const [shopID, setShopID] = useState([] as any);
+  const [idAddresses, setIdAddresses] = useState([] as any);
+
+  const togglePanel = () => setShowPanel(!showPanel);
+
+  const selectAddress = (address: any) => {
+    setSelectedAddress(address);
+    setShowPanel(false);
+  };
+  const getShopIDs = (cartData: any) => {
+    const shopIDs = cartData.reduce((acc: any, item: any) => {
+      const shopID = item?.shop?.id;
+      if (shopID && !acc.includes(shopID)) {
+        acc.push(shopID);
+      }
+      return acc;
+    }, []);
+    setShopID(shopIDs);
+  };
+
+  useEffect(() => {
+    if (cartDataStore) {
+      const parsedCartData = JSON.parse(cartDataStore);
+      setCartData(parsedCartData);
+      getShopIDs(parsedCartData);
+    }
+  }, []);
 
   const handleOpenVoucherPopup = () => {
+    localStorage.removeItem("idVoucher");
+    localStorage.removeItem("valueVoucher");
     setIsVoucherPopupOpen(true);
   };
 
   const handleCloseVoucherPopup = () => {
     setIsVoucherPopupOpen(false);
+  };
+
+  const handleCheckout = async () => {
+    const dataC = {
+      accountId: JSON.parse(accountID || ""),
+      address_id: idAddresses,
+      sections: cartData.map((item: any) => ({
+        desc: item?.product?.name,
+        item_id: [item?.product?.id],
+        section_id: item?.section_id,
+      })),
+      voucherId: idVoucher ? parseInt(idVoucher) : 0,
+    };
+    const c = await CheckoutService.checkout(JSON.stringify(dataC));
+    if (c?.result) {
+      alert("Checkout success");
+    } else {
+      alert("Checkout failed");
+    }
   };
 
   const groupByShop = (cartData: any) => {
@@ -32,17 +88,53 @@ export default function Checkout() {
       return acc;
     }, {});
   };
+  React.useEffect(() => {
+    const fetch = async () => {
+      const a = await CheckoutService.getAllAddressByAccountID(
+        JSON.parse(accountID || "")
+      );
+      if (a?.result) {
+        setAddress(a?.data);
+      }
+    };
+    fetch();
+  }, []);
+
   const groupedData = groupByShop(cartData);
 
   useEffect(() => {
     setCartData(JSON.parse(cartDataStore || "") || []);
-  }, []);
+    setSelectedAddress(address[0]);
+  }, [address, idAddresses, valueVoucherStr]);
+
+  const productCount = Object.values(groupedData).reduce(
+    (count: number, group: any) => count + group.products.length,
+    0
+  );
+
+  const handleRadioClick = (id: string) => {
+    setIdAddresses(id);
+  };
+
+  const subtotal = Object.values(groupedData)?.reduce(
+    (acc: number, group: any) => {
+      const groupTotal = group.products.reduce(
+        (groupAcc: number, item: any) => {
+          return groupAcc + item.total;
+        },
+        0
+      );
+      return acc + groupTotal;
+    },
+    0
+  );
 
   return (
     <div className="w-full flex flex-col justify-center items-center pt-4 pb-10 relative">
       <VoucherModal
         open={isVoucherPopupOpen}
         handleClose={handleCloseVoucherPopup}
+        shopID={shopID}
       />
       <CategoryMenu />
       <div className="w-3/4 flex pb-6">
@@ -55,33 +147,8 @@ export default function Checkout() {
               <h1 className="text-[18px] font-semibold">
                 Choose the Protocol Protocol
               </h1>
-              <div>
-                <div className="">
-                  <div className="bg-gray-100 p-4 rounded-lg border border-gray-300 mt-4 mb-4">
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        name="deliveryOption"
-                        className="form-radio h-5 w-5 text-blue-600"
-                      />
-                      <div className="ml-2">
-                        <span className="text-sm font-semibold ml-1">
-                          Express delivery
-                        </span>
-                        <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
-                          - $15
-                        </span>
-                      </div>
-                      <div className="flex-1 text-right">
-                        <span className="text-xs">
-                          Supports 2 products for this option
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4">
+
+              <div className="flex flex-col gap-4 mt-4">
                 {Object.values(groupedData).map((group: any, index: any) => (
                   <div key={index}>
                     <div className="bg-white rounded-lg border border-gray-200 box-border">
@@ -114,35 +181,22 @@ export default function Checkout() {
                                 {item?.product?.name}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Quantity: {item?.variant?.quantity}
+                                Price: ${item?.variant?.price}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Color: {item?.variant?.color?.value}
+                                Quantity: {item?.quantity}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Size: {item?.variant?.size?.value}
+                                Classtify: {item?.variant?.color?.value} /{" "}
+                                {item?.variant?.size?.value}
                               </p>
                             </div>
                           </div>
                           <div className="text-right flex flex-col gap-1">
-                            <p className="text-lg font-bold">
-                              ${item?.variant?.price * item?.variant?.quantity}
-                            </p>
+                            <p className="text-lg font-bold">${item?.total}</p>
                           </div>
                         </div>
                       ))}
-                      <div className="mt-4 flex items-center justify-between p-2">
-                        <div className="flex items-center space-x-2">
-                          <div className="h-3 w-3 bg-[rgb(var(--quaternary-rgb))] rounded-full"></div>
-                          <p className="text-sm text-gray-700">
-                            Delivered tomorrow, before 7pm, May 17
-                          </p>
-                        </div>
-                        <div className="text-sm bg-blue-100 text-[rgb(var(--quaternary-rgb))] py-1 px-3 rounded-full">
-                          Delivered by KIOTFPT Smart Logistics (delivered from
-                          Can Tho)
-                        </div>
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -157,25 +211,72 @@ export default function Checkout() {
               <div>
                 <div className="">
                   <div className="bg-gray-100 p-4 rounded-lg border border-gray-300 mt-4 mb-4">
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        name="deliveryOption"
-                        className="form-radio h-5 w-5 text-blue-600"
-                      />
-                      <div className="ml-2">
-                        <span className="text-sm font-semibold ml-1">
-                          200 Tô Vĩnh Diện, Long Tuyền, Bình Thuỷ, Cần Thơ
-                        </span>
-                        <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
-                          default
-                        </span>
+                    <div className="relative">
+                      <div className="flex items-center">
+                        <input
+                          type="radio"
+                          name="deliveryOption"
+                          className="form-radio h-5 w-5 text-blue-600"
+                          onClick={() =>
+                            handleRadioClick(address[0]?.address_id)
+                          }
+                        />
+                        <div className="ml-2 flex items-center">
+                          <span className="text-sm font-semibold ml-1">
+                            <div>
+                              {selectedAddress ? (
+                                <div>
+                                  {selectedAddress.address_value},{" "}
+                                  {selectedAddress.district?.district_value},{" "}
+                                  {selectedAddress.province?.province_value}
+                                </div>
+                              ) : (
+                                "Please select an address"
+                              )}
+                            </div>
+                          </span>
+                          {selectedAddress === address[0] && (
+                            <span className="ml-2 bg-[rgb(var(--quaternary-rgb))] text-white py-1 px-3 rounded-full text-xs">
+                              default
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex-1 text-right">
+                          <span
+                            className="text-xs font-bold text-[rgb(var(--quaternary-rgb))] cursor-pointer"
+                            onClick={togglePanel}
+                          >
+                            Change
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex-1 text-right">
-                        <span className="text-xs font-bold text-[rgb(var(--quaternary-rgb))] cursor-pointer">
-                          Change
-                        </span>
-                      </div>
+                      {showPanel && (
+                        <div
+                          className="cursor-pointer p-4 rounded-b-lg text-sm font-semibold flex flex-col gap-2"
+                          style={{
+                            position: "absolute",
+                            top: 32,
+                            left: -15,
+                            backgroundColor: "white",
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                            width: "100%",
+                            zIndex: 1000,
+                          }}
+                        >
+                          {address.map((address: any, index: any) => (
+                            <div
+                              key={index}
+                              onClick={() => selectAddress(address)}
+                              className=" hover:underline"
+                            >
+                              {address.address_value},{" "}
+                              {address.district?.district_value},{" "}
+                              {address.province?.province_value}
+                              {index === 0 ? " (default)" : ""}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -212,7 +313,9 @@ export default function Checkout() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-[18px] font-bold">Order</h1>
-              <h1 className="text-[16px]">0 products</h1>
+              <h1 className="text-[16px]">
+                {productCount} product{productCount > 1 ? "s" : ""}
+              </h1>
             </div>
             <button
               onClick={handleOpenVoucherPopup}
@@ -224,19 +327,24 @@ export default function Checkout() {
           <Divider />
           <div className="flex justify-between items-center">
             <h1>Subtotal</h1>
-            <h1></h1>
+            <h1>${subtotal}</h1>
           </div>
           <div className="flex justify-between items-center">
-            <h1>Delivery cost</h1>
-            <h1></h1>
+            <h1>Voucher</h1>
+            <h1>-{valueVoucher}%</h1>
           </div>
           <Divider />
           <div className="flex justify-between items-center">
             <h1 className="text-[18px] font-bold">Total</h1>
-            <h1 className="text-[18px] font-bold"></h1>
+            <h1 className="text-[18px] font-bold">
+              ${(subtotal * (1 - valueVoucher / 100)).toFixed(2)}
+            </h1>
           </div>
-          <button className="w-full bg-[rgb(var(--primary-rgb))] py-2 rounded-md text-white font-semibold text-[16px]">
-            Submit
+          <button
+            onClick={handleCheckout}
+            className="w-full bg-[rgb(var(--primary-rgb))] py-2 rounded-md text-white font-semibold text-[16px]"
+          >
+            Checkout
           </button>
         </div>
       </div>
