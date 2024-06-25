@@ -189,9 +189,30 @@ const getAddressByID = async (ID: string) => {
     }
 };
 
+const setAddressDefault = async (ID: string) => {
+    try {
+        const response = await fetch(API.SET_ADDRESS_BEFAULT + `/${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+
 const getAllCommentByAccountID = async (ID: string) => {
     try {
         const response = await fetch(API.GET_ALL_COMMENT_BY_ACCOUNT_ID + `?accountID=${ID}`);
+        const data = await response.json();
+        return data
+    } catch (err) {
+        return false;
+    }
+};
+
+const getAllProductNeedCommentByAccountID = async (ID: string) => {
+    try {
+        const response = await fetch(API.GET_ALL_PRODUCT_NEED_COMMENT_BY_ACCOUNT_ID + `?accountId=${ID}`);
         const data = await response.json();
         return data
     } catch (err) {
@@ -216,4 +237,6 @@ export const ProfileService = {
     getAddressByID,
     deleteFavouriteProduct,
     getAllCommentByAccountID,
+    getAllProductNeedCommentByAccountID,
+    setAddressDefault,
 }

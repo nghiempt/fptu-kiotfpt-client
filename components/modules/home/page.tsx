@@ -372,11 +372,11 @@ export default function Home() {
       <div className="w-3/4 p-4 my-5">
         <div className="font-black text-2xl text-gray-700">Recommended Items</div>
         <div className="py-5 grid grid-cols-5 gap-4">
-          {products.slice(0, 10)?.map((item: any, index: any) => {
+          {/* {products.slice(0, 10)?.map((item: any, index: any) => {
             return (
               <CardProduct key={index} item={item} index={index} limit={20} />
             );
-          })}
+          })} */}
         </div>
       </div>
     </div>

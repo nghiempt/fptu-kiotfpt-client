@@ -65,12 +65,21 @@ export default function Review() {
       const prof = await ProfileService.getAllCommentByAccountID(accountID);
       if (prof?.result) {
         setReviewedList(prof?.data);
-        console.log(prof?.data);
       } else {
         console.log("wrong");
       }
     }
     fetch();
+    const fetch2 = async () => {
+      const prof = await ProfileService.getAllProductNeedCommentByAccountID(accountID);
+      if (prof?.result) {
+        setNeedReviewList(prof?.data);
+        console.log(prof?.data);
+      } else {
+        console.log("wrong");
+      }
+    }
+    fetch2();
 
   }, []);
 
@@ -124,33 +133,31 @@ export default function Review() {
 
       <CustomTabPanel value={value} index={0}>
         <div className="flex flex-col gap-4">
-          {[1, 2, 3]?.map((item: any, index: any) => {
+          {needReviewList?.map((item: any, index: any) => {
             return (
               <div key={index} className="w-full bg-gray-50 rounded-lg p-2">
                 <div className="w-full flex gap-x-2 items-start">
-                  <img src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" className="w-1/6 rounded-md" />
-                  <div className="w-5/6 flex flex-col gap-3 p-2">
+                  <img src={item?.thumbnail[0]?.link} alt="" className="w-1/6 rounded-md aspect-square	" />
+                  <div className="w-5/6 flex flex-col h-full">
                     <div className="flex justify-between">
-                      <h1 className="text-[16px] font-medium">
-                        Quạt sạc Sunhouse SHD7116 (25W) - Hàng chính hãng
-                      </h1>
-                      <EditIcon className="text-gray-400" />
+                      <h1 className="text-[16px] font-medium">{item?.name}</h1>
+                      {/* <EditIcon className="text-gray-400" /> */}
                     </div>
-                    <div>
+                    {/* <div>
                       {[1, 2, 3, 4, 5]?.map((item: any, index: any) => {
                         return (
                           <StarIcon key={index} className="text-[#FF9017]" />
                         );
                       })}
-                    </div>
+                    </div> */}
 
-                    <h1>Good.</h1>
+                    {/* <h1>Good.</h1>
                     <div className="flex gap-x-4">
                       <ThumbUpIcon className="text-gray-400" />
                       <ChatBubbleIcon className="text-gray-400" />
-                    </div>
+                    </div> */}
                     <div className="w-full flex gap-x-4 items-center">
-                      <MoodIcon className="text-gray-400" />
+                      {/* <MoodIcon className="text-gray-400" /> */}
                       <div className="relative w-full box-border">
                         <input
                           type="text"
@@ -173,12 +180,10 @@ export default function Review() {
             return (
               <div className="w-full bg-gray-50 rounded-lg p-2">
                 <div className="w-full flex gap-x-2 items-start">
-                  <img src="https://salt.tikicdn.com/cache/750x750/ts/product/b3/bc/60/2b8f73b45b9a7745c429ef69dad316cf.png.webp" alt="" className="w-1/6 rounded-md" />
+                  <img src={item?.productMiniResponse?.thumbnail[0]?.link} alt="" className="w-1/6 rounded-md aspect-square	" />
                   <div className="w-5/6 flex flex-col gap-3 p-2">
                     <div className="flex justify-between">
-                      <h1 className="text-[16px] font-medium">
-                        Quạt sạc Sunhouse SHD7116 (25W) - Hàng chính hãng
-                      </h1>
+                      <h1 className="text-[16px] font-medium">{item?.productMiniResponse?.name}</h1>
                       <EditIcon className="text-gray-400" />
                     </div>
                     <div>

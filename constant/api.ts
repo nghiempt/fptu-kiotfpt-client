@@ -39,5 +39,7 @@ export const API = {
   UPDATE_PASSWORD: `${HOST}/profile/update-password`,
   UPDATE_ADDRESS: `${HOST}/address/update`,
   GET_ADDRESS_BY_ID: `${HOST}/address/get`,
+  SET_ADDRESS_BEFAULT: `${HOST}/address/set-default`,
   GET_ALL_COMMENT_BY_ACCOUNT_ID: `${HOST}/comment/get-all`,
+  GET_ALL_PRODUCT_NEED_COMMENT_BY_ACCOUNT_ID: `${HOST}/product/products-no-comments`,
 };
